@@ -1,4 +1,4 @@
-# 2026CompetitiveConcept
+# 2026-Comp-Bot
 
 This repository contains the code used for the WestCoast Products 2026 [Competitive Concept](https://wcproducts.com/pages/wcp-competitive-concepts).
 
