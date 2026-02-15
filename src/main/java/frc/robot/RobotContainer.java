@@ -1,26 +1,32 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import java.util.Optional;
+
+// import java.util.Optional;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.math.geometry.Pose2d;
+
+// import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+
 import frc.robot.Constants.Driving;
 import frc.robot.commands.AutoRoutines;
 import frc.robot.commands.SubsystemCommands;
 import frc.robot.subsystems.*;
 import frc.util.SwerveTelemetry;
-import frc.robot.util.Elastic;
-import frc.robot.util.Elastic.NotificationLevel;
+import frc.util.Elastic;
 
 public class RobotContainer {
-    // Manual instantiation avoids factory type mismatch
     private final Swerve swerve = new Swerve();
 
     private final Intake intake = new Intake();
@@ -54,12 +60,13 @@ public class RobotContainer {
             System.out.println("Warning: Could not start Elastic Layout Server: " + e.getMessage());
         }
 
-        // 3. Send Notification
+        // Send Notification using the inner enum and class corrected in Elastic.java
         Elastic.sendNotification(
                 new Elastic.Notification(
-                    NotificationLevel.INFO, 
+                    Elastic.NotificationLevel.INFO, // Referenced via Elastic class
                     "System Online", 
                     "Dual-Controller Mode Active"));
+                    
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
@@ -78,7 +85,6 @@ public class RobotContainer {
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
 
-        // operator controller yay//
         operator.rightBumper().whileTrue(subsystemCommands.shootManually());
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
     }
