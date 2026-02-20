@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5,
-        "y": 3.1385101469468255
+        "x": 2.0413817149720472,
+        "y": 3.2219058736040695
       },
       "isLocked": false,
       "linkedName": "Center Home"
@@ -20,28 +20,12 @@
         "y": 0.65
       },
       "prevControl": {
-        "x": 0.7667777777814306,
-        "y": 0.8583111111154813
-      },
-      "nextControl": {
-        "x": 0.30295484478818197,
-        "y": 0.4961390016685514
-      },
-      "isLocked": false,
-      "linkedName": "Human Player"
-    },
-    {
-      "anchor": {
-        "x": 2.5,
-        "y": 4.0
-      },
-      "prevControl": {
-        "x": 0.8447333333369853,
-        "y": 1.0824333333377036
+        "x": 2.0035070484716435,
+        "y": 3.1483482471016067
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": "Human Player"
     }
   ],
   "rotationTargets": [],
