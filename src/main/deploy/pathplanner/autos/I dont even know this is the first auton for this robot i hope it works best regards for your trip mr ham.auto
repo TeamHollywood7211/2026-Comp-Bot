@@ -45,6 +45,12 @@
           "data": {
             "name": "StowIntake"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AimAndShoot"
+          }
         }
       ]
     }
