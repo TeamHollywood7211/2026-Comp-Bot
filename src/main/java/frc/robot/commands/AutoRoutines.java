@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.Commands;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -50,24 +50,24 @@ public final class AutoRoutines {
 
         this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger);
 
-        // Register  Commands for PathPlanner to call during the auto
-        registerCommands();
+        // Register Named Commands for PathPlanner to call during the auto
+        registerNamedCommands();
 
         // PathPlanner AutoBuilder generates the chooser automatically
         this.autoChooser = AutoBuilder.buildAutoChooser();
     }
 
-    private void registerCommands() {
+    private void registerNamedCommands() {
         // These names must match the names you put in the PathPlanner GUI
-        Commands.registerCommand("Intake", intake.intakeCommand());
-        Commands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        Commands.registerCommand("AimAndShoot", subsystemCommands.aimAndShoot().withTimeout(5));
-        Commands.registerCommand("SpinUp", Commands.parallel(
+        NamedCommands.registerCommand("Intake", intake.intakeCommand());
+        NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
+        NamedCommands.registerCommand("AimAndShoot", subsystemCommands.aimAndShoot().withTimeout(5));
+        NamedCommands.registerCommand("SpinUp", Commands.parallel(
             shooter.spinUpCommand(2600),
             hood.positionCommand(0.32)
         ));
-        Commands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
-        Commands.registerCommand("HangFinish", hanger.positionCommand(Hanger.Position.HUNG));
+        NamedCommands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
+        NamedCommands.registerCommand("HangFinish", hanger.positionCommand(Hanger.Position.HUNG));
     }
 
     public void configure() {
