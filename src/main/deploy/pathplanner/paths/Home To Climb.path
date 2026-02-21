@@ -9,23 +9,23 @@
       "prevControl": null,
       "nextControl": {
         "x": 2.5,
-        "y": 4.935704979262553
+        "y": 3.75
       },
       "isLocked": false,
       "linkedName": "Center Home"
     },
     {
       "anchor": {
-        "x": 0.5,
-        "y": 6.0
+        "x": 1.0,
+        "y": 3.75
       },
       "prevControl": {
-        "x": 4.1093707495939915,
-        "y": 6.0
+        "x": 2.499574883372217,
+        "y": 3.75
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BB"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
@@ -36,7 +36,20 @@
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "HangReady",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "HangFinish",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -46,13 +59,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.1,
     "rotation": 180.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.1,
     "rotation": 0.0
   },
   "useDefaultConstraints": true

@@ -5,39 +5,27 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "SpinUp"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Start to center home"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "AimAndShoot"
+            "pathName": "Home To Human"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "HangReady"
+            "waitTime": 2.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Home To Hang"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "HangFinish"
+            "pathName": "Human To Home"
           }
         }
       ]
