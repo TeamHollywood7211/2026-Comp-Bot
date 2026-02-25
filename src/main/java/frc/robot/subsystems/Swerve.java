@@ -25,10 +25,6 @@ import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
-/**
- * Custom Swerve subsystem extending the generated TunerSwerveDrivetrain.
- * This file is where we add PathPlanner and Vision logic.
- */
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
@@ -73,17 +69,13 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
         }
     }
 
-    /**
-     * Required for PathPlanner.
-     * Uses the public getKinematics() method to avoid private access errors.
-     */
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return this.getKinematics().toChassisSpeeds(this.getState().ModuleStates);
     }
 
     public void resetPose(Pose2d pose) {
-        this.resetRotation(pose.getRotation());
         this.seedFieldCentric();
+        this.resetRotation(pose.getRotation());
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -106,10 +98,19 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             });
         }
 
-        /* Auto-update vision */
-        var visionPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
-        if (LimelightHelpers.getTV("limelight")) {
-            this.addVisionMeasurement(visionPose, Timer.getFPGATimestamp());
+        updateVision();
+    }
+
+    private void updateVision() {
+        // Use MegaTag2 for better rotation stability if available
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        
+        // Only update if we see a target and the data isn't too "noisy"
+        if (mt2 != null && mt2.tagCount > 0) {
+            // Set standard deviations: higher values = trust vision less
+            // Use 0.7m for XY and 999999 for rotation (let the Gyro handle rotation)
+            this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
+            this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
         }
     }
 
