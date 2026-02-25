@@ -38,14 +38,14 @@ public class Shooter extends SubsystemBase {
     private double dashboardTargetRPM = 0.0;
 
     public Shooter() {
-        leftMotor = new TalonFX(Ports.kShooterLeft, Ports.kRoboRioCANBus);
-        middleMotor = new TalonFX(Ports.kShooterMiddle, Ports.kRoboRioCANBus);
-        rightMotor = new TalonFX(Ports.kShooterRight, Ports.kRoboRioCANBus);
+        leftMotor = new TalonFX(Ports.kShooterLeft, Ports.kCANivoreCANBus);
+        middleMotor = new TalonFX(Ports.kShooterMiddle, Ports.kCANivoreCANBus);
+        rightMotor = new TalonFX(Ports.kShooterRight, Ports.kCANivoreCANBus);
         motors = List.of(leftMotor, middleMotor, rightMotor);
 
-        configureMotor(leftMotor, InvertedValue.CounterClockwise_Positive);
-        configureMotor(middleMotor, InvertedValue.Clockwise_Positive);
-        configureMotor(rightMotor, InvertedValue.Clockwise_Positive);
+        configureMotor(leftMotor, InvertedValue.Clockwise_Positive);
+        configureMotor(middleMotor, InvertedValue.CounterClockwise_Positive);
+        configureMotor(rightMotor, InvertedValue.CounterClockwise_Positive);
 
         SmartDashboard.putData(this);
     }

@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 
@@ -36,6 +37,7 @@ public class RobotContainer {
     private final Hood hood = new Hood();
     private final Hanger hanger = new Hanger();
     private final Limelight limelight = new Limelight("limelight");
+    private final Music music = new Music(swerve);
 
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     private final CommandXboxController driver = new CommandXboxController(0);
@@ -87,6 +89,18 @@ public class RobotContainer {
 
         operator.rightBumper().whileTrue(subsystemCommands.shootManually());
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
+
+        operator.a().onTrue(
+            new InstantCommand(
+                () -> music.playSong("cali_girls.chrp"), 
+                music
+            )
+        );
+
+        // Optional: Bind 'B' to stop the music if it gets annoying
+        operator.b().onTrue(
+            new InstantCommand(music::stop, music)
+        );
     }
 
     private void configureManualDriveBindings() {
