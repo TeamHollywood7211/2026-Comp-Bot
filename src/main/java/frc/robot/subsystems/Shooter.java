@@ -36,6 +36,7 @@ public class Shooter extends SubsystemBase {
     private final VoltageOut voltageRequest = new VoltageOut(0);
 
     private double dashboardTargetRPM = 0.0;
+    private double currentRequestedRPM = 0.0;
 
     public Shooter() {
         leftMotor = new TalonFX(Ports.kShooterLeft, Ports.kCANivoreCANBus);
@@ -51,39 +52,31 @@ public class Shooter extends SubsystemBase {
     }
 
     private void configureMotor(TalonFX motor, InvertedValue invertDirection) {
-        final TalonFXConfiguration config = new TalonFXConfiguration()
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(invertDirection)
-                    .withNeutralMode(NeutralModeValue.Coast)
-            )
-            .withVoltage(
-                new VoltageConfigs()
-                    .withPeakReverseVoltage(Volts.of(0))
-            )
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
-                    .withSupplyCurrentLimitEnable(true)
-            )
-            .withSlot0(
-                new Slot0Configs()
-                    .withKP(0.5)
-                    .withKI(2)
-                    .withKD(0)
-                    .withKV(12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS
-            );
+        final TalonFXConfiguration config = new TalonFXConfiguration();
+        
+        config.MotorOutput.Inverted = invertDirection;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        
+        config.Voltage.PeakReverseVoltage = 0.0;
+        
+        config.CurrentLimits.StatorCurrentLimit = 120.0;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = 70.0;
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        
+        config.Slot0.kP = 0.5;
+        config.Slot0.kI = 2.0;
+        config.Slot0.kD = 0.0;
+        config.Slot0.kV = 12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond);
         
         motor.getConfigurator().apply(config);
     }
 
     public void setRPM(double rpm) {
+        this.currentRequestedRPM = rpm;
         for (final TalonFX motor : motors) {
             motor.setControl(
-                velocityRequest
-                    .withVelocity(RPM.of(rpm))
+                velocityRequest.withVelocity(RPM.of(rpm))
             );
         }
     }
@@ -91,14 +84,14 @@ public class Shooter extends SubsystemBase {
     public void setPercentOutput(double percentOutput) {
         for (final TalonFX motor : motors) {
             motor.setControl(
-                voltageRequest
-                    .withOutput(Volts.of(percentOutput * 12.0))
+                voltageRequest.withOutput(Volts.of(percentOutput * 12.0))
             );
         }
     }
 
     public void stop() {
         setPercentOutput(0.0);
+        this.currentRequestedRPM = 0.0;
     }
 
     public Command spinUpCommand(double rpm) {
@@ -106,16 +99,23 @@ public class Shooter extends SubsystemBase {
             .andThen(Commands.waitUntil(this::isVelocityWithinTolerance));
     }
 
+    public Command runShooterCommand(double rpm) {
+        return run(() -> setRPM(rpm))
+            .finallyDo(() -> stop());
+    }
+
     public Command dashboardSpinUpCommand() {
-        return defer(() -> spinUpCommand(dashboardTargetRPM)); 
+        return run(() -> setRPM(dashboardTargetRPM))
+            .finallyDo(() -> stop());
     }
 
     public boolean isVelocityWithinTolerance() {
+        if (currentRequestedRPM == 0.0) return false;
+
         return motors.stream().allMatch(motor -> {
-            final boolean isInVelocityMode = motor.getAppliedControl().equals(velocityRequest);
             final AngularVelocity currentVelocity = motor.getVelocity().getValue();
-            final AngularVelocity targetVelocity = velocityRequest.getVelocityMeasure();
-            return isInVelocityMode && currentVelocity.isNear(targetVelocity, kVelocityTolerance);
+            final AngularVelocity targetVelocity = RPM.of(currentRequestedRPM);
+            return currentVelocity.isNear(targetVelocity, kVelocityTolerance);
         });
     }
 
@@ -132,6 +132,7 @@ public class Shooter extends SubsystemBase {
         initSendable(builder, rightMotor, "Right");
         builder.addStringProperty("Command", () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null", null);
         builder.addDoubleProperty("Dashboard RPM", () -> dashboardTargetRPM, value -> dashboardTargetRPM = value);
-        builder.addDoubleProperty("Target RPM", () -> velocityRequest.getVelocityMeasure().in(RPM), null);
+        builder.addDoubleProperty("Target RPM", () -> currentRequestedRPM, null);
+        builder.addBooleanProperty("At Target Speed", this::isVelocityWithinTolerance, null);
     }
 }

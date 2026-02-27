@@ -9,9 +9,9 @@ import frc.robot.subsystems.Floor;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Music;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Music;
 
 public final class SubsystemCommands {
     private final Swerve swerve;
@@ -76,8 +76,11 @@ public final class SubsystemCommands {
     }
 
     public Command aimAndShoot() {
+        // Fixed: We use the 3-argument constructor here. 
+        // This ensures AimAndDriveCommand ONLY drives, preventing it from fighting PrepareShotCommand over the flywheels.
         final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, forwardInput, leftInput);
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
+        
         return Commands.parallel(
             aimAndDriveCommand,
             Commands.waitSeconds(0.25)

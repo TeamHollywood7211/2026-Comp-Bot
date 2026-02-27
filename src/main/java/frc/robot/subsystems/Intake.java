@@ -7,17 +7,15 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
@@ -51,7 +49,7 @@ public class Intake extends SubsystemBase {
     public enum Position {
         HOMED(110),
         STOWED(100),
-        INTAKE(-6),
+        INTAKE(-40),
         AGITATE(20);
 
         private final double degrees;
@@ -69,7 +67,9 @@ public class Intake extends SubsystemBase {
     private static final AngularVelocity kMaxPivotSpeed = KrakenX60.kFreeSpeed.div(kPivotReduction);
     private static final Angle kPositionTolerance = Degrees.of(5);
 
-    private final TalonFX pivotMotor, rollerMotor;
+    private final TalonFX pivotMotor;
+    private final TalonFXS rollerMotor; 
+    
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0);
@@ -78,60 +78,50 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         pivotMotor = new TalonFX(Ports.kIntakePivot, Ports.kCANivoreCANBus);
-        rollerMotor = new TalonFX(Ports.kIntakeRollers, Ports.kCANivoreCANBus);
+        rollerMotor = new TalonFXS(Ports.kIntakeRollers, Ports.kCANivoreCANBus); 
         configurePivotMotor();
         configureRollerMotor();
         SmartDashboard.putData(this);
     }
 
     private void configurePivotMotor() {
-        final TalonFXConfiguration config = new TalonFXConfiguration()
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(InvertedValue.CounterClockwise_Positive)
-                    .withNeutralMode(NeutralModeValue.Brake)
-            )
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
-                    .withSupplyCurrentLimitEnable(true)
-            )
-            .withFeedback(
-                new FeedbackConfigs()
-                    .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                    .withSensorToMechanismRatio(kPivotReduction)
-            )
-            .withMotionMagic(
-                new MotionMagicConfigs()
-                    .withMotionMagicCruiseVelocity(kMaxPivotSpeed)
-                    .withMotionMagicAcceleration(kMaxPivotSpeed.per(Second))
-            )
-            .withSlot0(
-                new Slot0Configs()
-                    .withKP(300)
-                    .withKI(0)
-                    .withKD(0)
-                    .withKV(12.0 / kMaxPivotSpeed.in(RotationsPerSecond)) // 12 volts when requesting max RPS
-            );
+        final TalonFXConfiguration config = new TalonFXConfiguration();
+        
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        
+        config.CurrentLimits.StatorCurrentLimit = 120.0;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = 70.0;
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        
+        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        config.Feedback.SensorToMechanismRatio = kPivotReduction;
+        
+        config.MotionMagic.MotionMagicCruiseVelocity = kMaxPivotSpeed.in(RotationsPerSecond);
+        config.MotionMagic.MotionMagicAcceleration = kMaxPivotSpeed.per(Second).in(RotationsPerSecond.per(Second));
+        
+        config.Slot0.kP = 300;
+        config.Slot0.kI = 0;
+        config.Slot0.kD = 0;
+        config.Slot0.kV = 12.0 / kMaxPivotSpeed.in(RotationsPerSecond);
+        
         pivotMotor.getConfigurator().apply(config);
     }
 
     private void configureRollerMotor() {
-        final TalonFXConfiguration config = new TalonFXConfiguration()
-            .withMotorOutput(
-                new MotorOutputConfigs()
-                    .withInverted(InvertedValue.Clockwise_Positive)
-                    .withNeutralMode(NeutralModeValue.Brake)
-            )
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
-                    .withSupplyCurrentLimitEnable(true)
-            );
+        final TalonFXSConfiguration config = new TalonFXSConfiguration();
+
+        config.Commutation.MotorArrangement = MotorArrangementValue.VORTEX_JST;
+
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        config.CurrentLimits.StatorCurrentLimit = 80.0;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        
         rollerMotor.getConfigurator().apply(config);
     }
 

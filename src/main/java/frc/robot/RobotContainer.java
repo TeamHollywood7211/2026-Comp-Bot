@@ -81,7 +81,8 @@ public class RobotContainer {
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
 
-        operator.rightBumper().whileTrue(subsystemCommands.shootManually());
+        // Use the new runShooterCommand from Shooter.java. I've set it to 3000 RPM as an example.
+        operator.rightBumper().whileTrue(shooter.runShooterCommand(3000));
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
 
         operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
@@ -94,12 +95,10 @@ public class RobotContainer {
                         .withVelocityY(-driver.getLeftX() * 4.5)
                         .withRotationalRate(-driver.getRightX() * 6.28)));
 
-        // Note: Driver A/B/X/Y are now overriding the Hanger bindings above 
-        // if they are defined in both methods. Check which controller should handle perspective!
-        driver.a().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.k180deg)));
-        driver.b().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCW_90deg)));
-        driver.x().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCCW_90deg)));
-        driver.y().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kZero)));
+        // driver.a().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.k180deg)));
+        // driver.b().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCW_90deg)));
+        // driver.x().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCCW_90deg)));
+        // driver.y().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kZero)));
         driver.back().onTrue(swerve.runOnce(swerve::seedFieldCentric));
     }
 
