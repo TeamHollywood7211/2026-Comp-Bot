@@ -15,6 +15,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Music;
 
 public final class AutoRoutines {
     private final Swerve swerve;
@@ -25,20 +26,21 @@ public final class AutoRoutines {
     private final Hood hood;
     private final Hanger hanger;
     private final Limelight limelight;
+    private final Music music;
 
     private final SubsystemCommands subsystemCommands;
     private final SendableChooser<Command> autoChooser;
 
     public AutoRoutines(
-        Swerve swerve,
-        Intake intake,
-        Floor floor,
-        Feeder feeder,
-        Shooter shooter,
-        Hood hood,
-        Hanger hanger,
-        Limelight limelight
-    ) {
+            Swerve swerve,
+            Intake intake,
+            Floor floor,
+            Feeder feeder,
+            Shooter shooter,
+            Hood hood,
+            Hanger hanger,
+            Limelight limelight,
+            Music music) {
         this.swerve = swerve;
         this.intake = intake;
         this.floor = floor;
@@ -47,8 +49,9 @@ public final class AutoRoutines {
         this.hood = hood;
         this.hanger = hanger;
         this.limelight = limelight;
+        this.music = music;
 
-        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger);
+        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger, music);
 
         // Register Named Commands for PathPlanner to call during the auto
         registerNamedCommands();
@@ -63,11 +66,12 @@ public final class AutoRoutines {
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         NamedCommands.registerCommand("AimAndShoot", subsystemCommands.aimAndShoot().withTimeout(5));
         NamedCommands.registerCommand("SpinUp", Commands.parallel(
-            shooter.spinUpCommand(2600),
-            hood.positionCommand(0.32)
-        ));
+                shooter.spinUpCommand(2600),
+                hood.positionCommand(0.32)));
         NamedCommands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
         NamedCommands.registerCommand("HangFinish", hanger.positionCommand(Hanger.Position.HUNG));
+        NamedCommands.registerCommand("Play Cali Girls", music.runOnce(() -> music.playSong("cali_girls.chrp")));
+        NamedCommands.registerCommand("Stop Music", music.runOnce(() -> music.stop()));
     }
 
     public void configure() {

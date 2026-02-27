@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.Ports;
+
 
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -103,7 +105,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
     private void updateVision() {
         // Use MegaTag2 for better rotation stability if available
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
         
         // Only update if we see a target and the data isn't too "noisy"
         if (mt2 != null && mt2.tagCount > 0) {

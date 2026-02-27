@@ -21,4 +21,7 @@ public final class Ports {
     // PWM Ports
     public static final int kHoodLeftServo = 0;
     public static final int kHoodRightServo = 1;
+
+    // LimeLight Cam Host Names
+    public static final String kLimeLightShooter = "limelight-right";
 }

@@ -11,6 +11,7 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Music;
 
 public final class SubsystemCommands {
     private final Swerve swerve;
@@ -20,6 +21,7 @@ public final class SubsystemCommands {
     private final Shooter shooter;
     private final Hood hood;
     private final Hanger hanger;
+    private final Music music;
 
     private final DoubleSupplier forwardInput;
     private final DoubleSupplier leftInput;
@@ -32,6 +34,7 @@ public final class SubsystemCommands {
         Shooter shooter,
         Hood hood,
         Hanger hanger,
+        Music music,
         DoubleSupplier forwardInput,
         DoubleSupplier leftInput
     ) {
@@ -42,6 +45,7 @@ public final class SubsystemCommands {
         this.shooter = shooter;
         this.hood = hood;
         this.hanger = hanger;
+        this.music = music;
 
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
@@ -54,7 +58,8 @@ public final class SubsystemCommands {
         Feeder feeder,
         Shooter shooter,
         Hood hood,
-        Hanger hanger
+        Hanger hanger,
+        Music music
     ) {
         this(
             swerve,
@@ -64,6 +69,7 @@ public final class SubsystemCommands {
             shooter,
             hood,
             hanger,
+            music,
             () -> 0,
             () -> 0
         );

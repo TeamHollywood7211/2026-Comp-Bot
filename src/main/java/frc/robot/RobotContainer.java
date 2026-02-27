@@ -6,17 +6,13 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
-// import java.util.Optional;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-// import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 
@@ -36,9 +32,8 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter();
     private final Hood hood = new Hood();
     private final Hanger hanger = new Hanger();
-    private final Limelight limelight = new Limelight("limelight-right");
+    private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
-
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     private final CommandXboxController driver = new CommandXboxController(0);
     private final CommandXboxController operator = new CommandXboxController(1);
@@ -48,10 +43,10 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final AutoRoutines autoRoutines = new AutoRoutines(
-            swerve, intake, floor, feeder, shooter, hood, hanger, limelight);
+            swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music);
 
     private final SubsystemCommands subsystemCommands = new SubsystemCommands(
-            swerve, intake, floor, feeder, shooter, hood, hanger,
+            swerve, intake, floor, feeder, shooter, hood, hanger, music,
             () -> -driver.getLeftY(),
             () -> -driver.getLeftX());
 
@@ -62,10 +57,9 @@ public class RobotContainer {
             System.out.println("Warning: Could not start Elastic Layout Server: " + e.getMessage());
         }
 
-        // Send Notification using the inner enum and class corrected in Elastic.java
         Elastic.sendNotification(
                 new Elastic.Notification(
-                    Elastic.NotificationLevel.INFO, // Referenced via Elastic class
+                    Elastic.NotificationLevel.INFO, 
                     "System Online", 
                     "Dual-Controller Mode Active"));
                     
@@ -90,17 +84,8 @@ public class RobotContainer {
         operator.rightBumper().whileTrue(subsystemCommands.shootManually());
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
 
-        operator.a().onTrue(
-            new InstantCommand(
-                () -> music.playSong("cali_girls.chrp"), 
-                music
-            )
-        );
-
-        // Optional: Bind 'B' to stop the music if it gets annoying
-        operator.b().onTrue(
-            new InstantCommand(music::stop, music)
-        );
+        operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
+        operator.b().onTrue(music.runOnce(music::stop));
     }
 
     private void configureManualDriveBindings() {
@@ -109,6 +94,8 @@ public class RobotContainer {
                         .withVelocityY(-driver.getLeftX() * 4.5)
                         .withRotationalRate(-driver.getRightX() * 6.28)));
 
+        // Note: Driver A/B/X/Y are now overriding the Hanger bindings above 
+        // if they are defined in both methods. Check which controller should handle perspective!
         driver.a().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.k180deg)));
         driver.b().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCW_90deg)));
         driver.x().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCCW_90deg)));
