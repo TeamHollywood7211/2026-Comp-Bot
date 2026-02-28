@@ -41,6 +41,7 @@ public class Limelight extends SubsystemBase {
             HttpCameraKind.kMJPGStreamer
         );
         CameraServer.addCamera(limelightFeed);
+        CameraServer.startAutomaticCapture(limelightFeed);
     }
 
     public Optional<Measurement> getMeasurement(Pose2d currentRobotPose) {

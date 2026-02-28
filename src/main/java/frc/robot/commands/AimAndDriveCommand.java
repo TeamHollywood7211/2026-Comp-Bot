@@ -21,7 +21,7 @@ import frc.util.GeometryUtil;
 import frc.util.ManualDriveInput;
 
 public class AimAndDriveCommand extends Command {
-    private static final Angle kAimTolerance = Degrees.of(2);
+    private static final Angle kAimTolerance = Degrees.of(6);
 
     private final Swerve swerve;
     private final DriveInputSmoother inputSmoother;

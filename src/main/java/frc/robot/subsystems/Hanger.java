@@ -37,7 +37,7 @@ public class Hanger extends SubsystemBase {
     public enum Position {
         HOMED(0),
         EXTEND_HOPPER(2),
-        HANGING(5.5),
+        HANGING(2.5),
         HUNG(0.1);
 
         private final double inches;
