@@ -34,10 +34,10 @@ public class RobotContainer {
     private final Hanger hanger = new Hanger();
     private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
-    
+
     // Initialize the new GamePhaseSubsystem here
     private final GamePhaseSubsystem gamePhase = new GamePhaseSubsystem();
-    
+
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     private final CommandXboxController driver = new CommandXboxController(0);
     private final CommandXboxController operator = new CommandXboxController(1);
@@ -63,10 +63,10 @@ public class RobotContainer {
 
         Elastic.sendNotification(
                 new Elastic.Notification(
-                    Elastic.NotificationLevel.INFO, 
-                    "System Online", 
-                    "Dual-Controller Mode Active"));
-                    
+                        Elastic.NotificationLevel.INFO,
+                        "System Online",
+                        "Dual-Controller Mode Active"));
+
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
@@ -102,6 +102,9 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoRoutines.getSelectedAuto();
+        // OVERRIDE: Forces the robot to drive straight forward at 1 m/s for 2 seconds.
+        return swerve.applyRequest(() -> new com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds()
+                .withDriveRequestType(com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.OpenLoopVoltage)
+                .withSpeeds(new edu.wpi.first.math.kinematics.ChassisSpeeds(1.0, 0.0, 0.0))).withTimeout(2.0);
     }
 }
