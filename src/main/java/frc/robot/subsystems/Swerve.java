@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -31,6 +32,9 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     private boolean m_hasAppliedOperatorPerspective = false;
 
+    private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
     public Swerve() {
         super(
                 TunerConstants.DrivetrainConstants,
@@ -52,7 +56,7 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
                     () -> this.getState().Pose,
                     this::resetPose,
                     this::getRobotRelativeSpeeds,
-                    (speeds, feedforwards) -> setControl(new SwerveRequest.ApplyRobotSpeeds()
+                    (speeds, feedforwards) -> setControl(autoRequest
                             .withSpeeds(speeds)
                             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
