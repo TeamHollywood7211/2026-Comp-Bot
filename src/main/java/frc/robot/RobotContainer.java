@@ -102,9 +102,14 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        // OVERRIDE: Forces the robot to drive straight forward at 1 m/s for 2 seconds.
-        return swerve.applyRequest(() -> new com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds()
-                .withDriveRequestType(com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.OpenLoopVoltage)
-                .withSpeeds(new edu.wpi.first.math.kinematics.ChassisSpeeds(1.0, 0.0, 0.0))).withTimeout(2.0);
+        Command selected = autoRoutines.getSelectedAuto();
+        
+        if (selected == null) {
+            System.out.println("CRITICAL: No Auto Selected in Chooser! Check Dashboard.");
+            return swerve.runOnce(() -> {}); 
+        }
+
+        System.out.println("SELECTED AUTO: " + selected.getName());
+        return selected;
     }
 }
