@@ -34,6 +34,10 @@ public class RobotContainer {
     private final Hanger hanger = new Hanger();
     private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
+    
+    // Initialize the new GamePhaseSubsystem here
+    private final GamePhaseSubsystem gamePhase = new GamePhaseSubsystem();
+    
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
     private final CommandXboxController driver = new CommandXboxController(0);
     private final CommandXboxController operator = new CommandXboxController(1);
@@ -81,7 +85,6 @@ public class RobotContainer {
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
 
-        // Use the new runShooterCommand from Shooter.java. I've set it to 3000 RPM as an example.
         operator.rightBumper().whileTrue(shooter.runShooterCommand(3000));
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
 
@@ -95,10 +98,6 @@ public class RobotContainer {
                         .withVelocityY(-driver.getLeftX() * 4.5)
                         .withRotationalRate(-driver.getRightX() * 6.28)));
 
-        // driver.a().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.k180deg)));
-        // driver.b().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCW_90deg)));
-        // driver.x().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kCCW_90deg)));
-        // driver.y().onTrue(swerve.runOnce(() -> swerve.setOperatorPerspectiveForward(Rotation2d.kZero)));
         driver.back().onTrue(swerve.runOnce(swerve::seedFieldCentric));
     }
 
