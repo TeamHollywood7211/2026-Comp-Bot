@@ -29,115 +29,124 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
-private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
-private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
-private boolean m_hasAppliedOperatorPerspective = false;
+    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
+    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
+    private boolean m_hasAppliedOperatorPerspective = false;
 
-// Use Velocity. TunerConstants configures it to use Voltage mode under the hood automatically.
-private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
-        .withDriveRequestType(DriveRequestType.Velocity);
+    // Optimized requests to prevent memory allocation during loop
+    private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
+            .withDriveRequestType(DriveRequestType.Velocity);
 
-public Swerve() {
-    super(
-            TunerConstants.DrivetrainConstants,
-            0,
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            TunerConstants.FrontLeft,
-            TunerConstants.FrontRight,
-            TunerConstants.BackLeft,
-            TunerConstants.BackRight);
+    private final SwerveRequest.FieldCentricFacingAngle alignmentRequest = new SwerveRequest.FieldCentricFacingAngle()
+            .withDriveRequestType(DriveRequestType.Velocity)
+            .withDeadband(0.1)
+            .withRotationalDeadband(0.1);
 
-    // Dynamically override the generated TunerConstants to inject static friction compensation (kS)
-    Slot0Configs driveGainsOverride = new Slot0Configs()
-            .withKP(0.1).withKI(0).withKD(0)
-            .withKS(0.2).withKV(0.124);
+    public Swerve() {
+        super(
+                TunerConstants.DrivetrainConstants,
+                0,
+                VecBuilder.fill(0.1, 0.1, 0.1),
+                VecBuilder.fill(0.1, 0.1, 0.1),
+                TunerConstants.FrontLeft,
+                TunerConstants.FrontRight,
+                TunerConstants.BackLeft,
+                TunerConstants.BackRight);
 
-    for (int i = 0; i < 4; i++) {
-        this.getModule(i).getDriveMotor().getConfigurator().apply(driveGainsOverride);
+        // Manual Override of drive gains to ensure kS overcomes Kraken friction
+        Slot0Configs driveGainsOverride = new Slot0Configs()
+                .withKP(0.1).withKI(0).withKD(0)
+                .withKS(0.2).withKV(0.124);
+
+        for (int i = 0; i < 4; i++) {
+            this.getModule(i).getDriveMotor().getConfigurator().apply(driveGainsOverride);
+        }
+
+        configurePathPlanner();
     }
 
-    configurePathPlanner();
-}
+    private void configurePathPlanner() {
+        try {
+            RobotConfig config = RobotConfig.fromGUISettings();
 
-private void configurePathPlanner() {
-    try {
-        RobotConfig config = RobotConfig.fromGUISettings();
-
-        AutoBuilder.configure(
-                () -> this.getState().Pose,
-                this::resetPose,
-                this::getRobotRelativeSpeeds,
-                (speeds, feedforwards) -> setControl(autoRequest
-                        .withSpeeds(speeds)
-                        .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                        .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
-                new PPHolonomicDriveController(
-                        new PIDConstants(5.0, 0.0, 0.0),
-                        new PIDConstants(5.0, 0.0, 0.0)),
-                config,
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                this);
-    } catch (Exception e) {
-        DriverStation.reportError("PathPlanner config failed: " + e.getMessage(), e.getStackTrace());
-    }
-}
-
-public ChassisSpeeds getRobotRelativeSpeeds() {
-    return this.getKinematics().toChassisSpeeds(this.getState().ModuleStates);
-}
-
-public void resetPose(Pose2d pose) {
-    this.seedFieldCentric();
-    this.resetRotation(pose.getRotation());
-}
-
-public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-    return run(() -> this.setControl(requestSupplier.get()));
-}
-
-@Override
-public void periodic() {
-    if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-        DriverStation.getAlliance().ifPresent(allianceColor -> {
-            setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                            ? kRedAlliancePerspectiveRotation
-                            : kBlueAlliancePerspectiveRotation);
-            if (!m_hasAppliedOperatorPerspective) {
-                seedFieldCentric();
-            }
-            m_hasAppliedOperatorPerspective = true;
-        });
+            AutoBuilder.configure(
+                    () -> this.getState().Pose,
+                    this::resetPose,
+                    this::getRobotRelativeSpeeds,
+                    (speeds, feedforwards) -> setControl(autoRequest
+                            .withSpeeds(speeds)
+                            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(5.0, 0.0, 0.0),
+                            new PIDConstants(5.0, 0.0, 0.0)),
+                    config,
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this);
+        } catch (Exception e) {
+            DriverStation.reportError("PathPlanner config failed: " + e.getMessage(), e.getStackTrace());
+        }
     }
 
-    updateVision();
-}
-
-private void updateVision() {
-    double fieldRelativeYawDegrees = this.getState().Pose.getRotation().getDegrees();
-
-    LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, fieldRelativeYawDegrees, 0, 0, 0, 0, 0);
-    
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
-    
-    if (mt2 != null && mt2.tagCount > 0) {
-        this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
-        this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+    public ChassisSpeeds getRobotRelativeSpeeds() {
+        return this.getKinematics().toChassisSpeeds(this.getState().ModuleStates);
     }
-}
 
-@Override
-public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-    super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
-}
+    public void resetPose(Pose2d pose) {
+        this.seedFieldCentric();
+        this.resetRotation(pose.getRotation());
+    }
 
-@Override
-public void addVisionMeasurement(
-        Pose2d visionRobotPoseMeters,
-        double timestampSeconds,
-        Matrix<N3, N1> visionMeasurementStdDevs) {
-    super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
-            visionMeasurementStdDevs);
-}
+    public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
+        return run(() -> this.setControl(requestSupplier.get()));
+    }
+
+    @Override
+    public void periodic() {
+        // Automatic Perspective Handling (Phoenix 6 Swerve API Section: Alliance Perspective)
+        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+            DriverStation.getAlliance().ifPresent(allianceColor -> {
+                this.setOperatorPerspectiveForward(
+                        allianceColor == Alliance.Red
+                                ? kRedAlliancePerspectiveRotation
+                                : kBlueAlliancePerspectiveRotation);
+                if (!m_hasAppliedOperatorPerspective) {
+                    seedFieldCentric();
+                }
+                m_hasAppliedOperatorPerspective = true;
+            });
+        }
+
+        updateVision();
+    }
+
+    private void updateVision() {
+        // Use the odometry rotation as orientation for MegaTag2. 
+        // Because setOperatorPerspectiveForward is used, Pose.getRotation() is already field-relative.
+        double fieldRelativeYawDegrees = this.getState().Pose.getRotation().getDegrees();
+
+        LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, fieldRelativeYawDegrees, 0, 0, 0, 0, 0);
+        
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
+        
+        if (mt2 != null && mt2.tagCount > 0) {
+            // Standard Deviations: Trust X/Y, ignore vision rotation in favor of the IMU (Section: Vision Integration)
+            this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
+            this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+        }
+    }
+
+    @Override
+    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    @Override
+    public void addVisionMeasurement(
+            Pose2d visionRobotPoseMeters,
+            double timestampSeconds,
+            Matrix<N3, N1> visionMeasurementStdDevs) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
+                visionMeasurementStdDevs);
+    }
 }
