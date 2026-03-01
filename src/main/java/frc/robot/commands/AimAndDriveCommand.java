@@ -21,24 +21,23 @@ import frc.util.GeometryUtil;
 import frc.util.ManualDriveInput;
 
 public class AimAndDriveCommand extends Command {
-    private static final Angle kAimTolerance = Degrees.of(5);
+    private static final Angle kAimTolerance = Degrees.of(6);
 
     private final Swerve swerve;
     private final DriveInputSmoother inputSmoother;
 
     private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
-        .withRotationalDeadband(Driving.kPIDRotationDeadband)
-        .withMaxAbsRotationalRate(Driving.kMaxRotationalRate)
-        .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-        .withSteerRequestType(SteerRequestType.MotionMagicExpo)
-        .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
-        .withHeadingPID(5, 0, 0);
+            .withRotationalDeadband(Driving.kPIDRotationDeadband)
+            .withMaxAbsRotationalRate(Driving.kMaxRotationalRate)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+            .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
+            .withHeadingPID(10, 0, 0.1);
 
     public AimAndDriveCommand(
-        Swerve swerve,
-        DoubleSupplier forwardInput,
-        DoubleSupplier leftInput
-    ) {
+            Swerve swerve,
+            DoubleSupplier forwardInput,
+            DoubleSupplier leftInput) {
         this.swerve = swerve;
         this.inputSmoother = new DriveInputSmoother(forwardInput, leftInput);
         addRequirements(swerve);
@@ -51,27 +50,29 @@ public class AimAndDriveCommand extends Command {
     public boolean isAimed() {
         final Rotation2d targetHeading = fieldCentricFacingAngleRequest.TargetDirection;
         final Rotation2d currentHeadingInBlueAlliancePerspective = swerve.getState().Pose.getRotation();
-        final Rotation2d currentHeadingInOperatorPerspective = currentHeadingInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
+        
+        final Rotation2d currentHeadingInOperatorPerspective = currentHeadingInBlueAlliancePerspective
+                .minus(swerve.getOperatorForwardDirection());
+        
         return GeometryUtil.isNear(targetHeading, currentHeadingInOperatorPerspective, kAimTolerance);
     }
 
     private Rotation2d getDirectionToHub() {
         final Translation2d hubPosition = Landmarks.hubPosition();
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
-        final Rotation2d hubDirectionInBlueAlliancePerspective = hubPosition.minus(robotPosition).getAngle();
-        final Rotation2d hubDirectionInOperatorPerspective = hubDirectionInBlueAlliancePerspective.rotateBy(swerve.getOperatorForwardDirection());
-        return hubDirectionInOperatorPerspective;
+
+        Rotation2d fieldRelativeAngle = hubPosition.minus(robotPosition).getAngle();
+        return fieldRelativeAngle.minus(swerve.getOperatorForwardDirection());
     }
 
     @Override
     public void execute() {
         final ManualDriveInput input = inputSmoother.getSmoothedInput();
         swerve.setControl(
-            fieldCentricFacingAngleRequest
-                .withVelocityX(Driving.kMaxSpeed.times(input.forward))
-                .withVelocityY(Driving.kMaxSpeed.times(input.left))
-                .withTargetDirection(getDirectionToHub())
-        );
+                fieldCentricFacingAngleRequest
+                        .withVelocityX(Driving.kMaxSpeed.times(input.forward))
+                        .withVelocityY(Driving.kMaxSpeed.times(input.left))
+                        .withTargetDirection(getDirectionToHub()));
     }
 
     @Override

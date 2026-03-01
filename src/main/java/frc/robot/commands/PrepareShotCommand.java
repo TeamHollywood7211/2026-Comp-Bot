@@ -13,6 +13,7 @@ import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
 import frc.robot.Landmarks;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
@@ -32,9 +33,9 @@ public class PrepareShotCommand extends Command {
     );
 
     static {
-        distanceToShotMap.put(Inches.of(52.0), new Shot(2800, 0.19));
-        distanceToShotMap.put(Inches.of(114.4), new Shot(3275, 0.40));
-        distanceToShotMap.put(Inches.of(165.5), new Shot(3650, 0.48));
+        distanceToShotMap.put(Inches.of(52.0), new Shot(3200, 0.19));
+        distanceToShotMap.put(Inches.of(114.4), new Shot(3800, 0.4));
+        distanceToShotMap.put(Inches.of(165.5), new Shot(4300, 0.4));
     }
 
     private final Shooter shooter;

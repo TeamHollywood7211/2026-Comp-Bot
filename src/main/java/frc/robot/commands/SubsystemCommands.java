@@ -9,6 +9,7 @@ import frc.robot.subsystems.Floor;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Music;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 
@@ -20,6 +21,7 @@ public final class SubsystemCommands {
     private final Shooter shooter;
     private final Hood hood;
     private final Hanger hanger;
+    private final Music music;
 
     private final DoubleSupplier forwardInput;
     private final DoubleSupplier leftInput;
@@ -32,6 +34,7 @@ public final class SubsystemCommands {
         Shooter shooter,
         Hood hood,
         Hanger hanger,
+        Music music,
         DoubleSupplier forwardInput,
         DoubleSupplier leftInput
     ) {
@@ -42,6 +45,7 @@ public final class SubsystemCommands {
         this.shooter = shooter;
         this.hood = hood;
         this.hanger = hanger;
+        this.music = music;
 
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
@@ -54,7 +58,8 @@ public final class SubsystemCommands {
         Feeder feeder,
         Shooter shooter,
         Hood hood,
-        Hanger hanger
+        Hanger hanger,
+        Music music
     ) {
         this(
             swerve,
@@ -64,14 +69,18 @@ public final class SubsystemCommands {
             shooter,
             hood,
             hanger,
+            music,
             () -> 0,
             () -> 0
         );
     }
 
     public Command aimAndShoot() {
+        // Fixed: We use the 3-argument constructor here. 
+        // This ensures AimAndDriveCommand ONLY drives, preventing it from fighting PrepareShotCommand over the flywheels.
         final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, forwardInput, leftInput);
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
+        
         return Commands.parallel(
             aimAndDriveCommand,
             Commands.waitSeconds(0.25)

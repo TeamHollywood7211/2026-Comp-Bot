@@ -2,15 +2,20 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.LimelightHelpers;
 import frc.robot.LimelightHelpers.PoseEstimate;
 
@@ -23,6 +28,20 @@ public class Limelight extends SubsystemBase {
         this.name = name;
         this.telemetryTable = NetworkTableInstance.getDefault().getTable("SmartDashboard/" + name);
         this.posePublisher = telemetryTable.getStructTopic("Estimated Robot Pose", Pose2d.struct).publish();
+
+        // Forwards the Limelight ports through the RoboRIO so the dashboard can connect
+        PortForwarder.add(5800, name + ".local", 5800);
+        PortForwarder.add(5801, name + ".local", 5801);
+        PortForwarder.add(5802, name + ".local", 5802);
+
+        // Creates the camera stream and publishes it to the dashboard
+        HttpCamera limelightFeed = new HttpCamera(
+            name + " Feed", 
+            "http://" + name + ".local:5800/stream.mjpg", 
+            HttpCameraKind.kMJPGStreamer
+        );
+        CameraServer.addCamera(limelightFeed);
+        CameraServer.startAutomaticCapture(limelightFeed);
     }
 
     public Optional<Measurement> getMeasurement(Pose2d currentRobotPose) {
