@@ -8,10 +8,13 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -49,14 +52,17 @@ public class RobotContainer {
             swerve, intake, floor, feeder, shooter, hood, hanger, music,
             () -> -driver.getLeftY(),
             () -> -driver.getLeftX());
+        private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        try {
+        /*try {
             WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
         } catch (Exception e) {
             System.out.println("Warning: Could not start Elastic Layout Server: " + e.getMessage());
         }
-
+*/
+        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        SmartDashboard.putData("Auto Mode", autoChooser);
         Elastic.sendNotification(
                 new Elastic.Notification(
                     Elastic.NotificationLevel.INFO, 
@@ -80,13 +86,15 @@ public class RobotContainer {
 
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+        driver.leftBumper().whileTrue(floor.feedCommand());
 
         // Use the new runShooterCommand from Shooter.java. I've set it to 3000 RPM as an example.
         operator.rightBumper().whileTrue(shooter.runShooterCommand(3000));
+        operator.leftTrigger().and(operator.rightBumper()).whileTrue(feeder.feedCommand());
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
 
-        operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
-        operator.b().onTrue(music.runOnce(music::stop));
+        // operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
+        // operator.b().onTrue(music.runOnce(music::stop));
     }
 
     private void configureManualDriveBindings() {
@@ -103,6 +111,8 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoRoutines.getSelectedAuto();
+        /*return autoRoutines.getSelectedAuto();
+        */
+        return autoChooser.getSelected();
     }
 }
