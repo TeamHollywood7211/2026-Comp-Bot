@@ -1,0 +1,105 @@
+{
+  "version": "1.0.0",
+  "grid_size": [24, 12],
+  "components": [
+    {
+      "type": "Camera",
+      "title": "Limelight Feed",
+      "pos": [0, 0],
+      "size": [12, 8],
+      "properties": {
+        "topic": "CameraPublisher/Limelight/streams",
+        "stream_index": 0,
+        "show_crosshair": true,
+        "crosshair_color": "#00FF00"
+      }
+    },
+    {
+      "type": "Boolean Box",
+      "title": "HUB ACTIVE",
+      "pos": [12, 0],
+      "size": [4, 2],
+      "properties": {
+        "topic": "SmartDashboard/Match/HubActive",
+        "color_true": "#00FF00",
+        "color_false": "#FF0000",
+        "label_true": "GO!",
+        "label_false": "WAIT"
+      }
+    },
+    {
+      "type": "Text View",
+      "title": "MATCH PHASE",
+      "pos": [16, 0],
+      "size": [4, 2],
+      "properties": {
+        "topic": "SmartDashboard/Match/Phase"
+      }
+    },
+    {
+      "type": "Number Bar",
+      "title": "MATCH TIME",
+      "pos": [20, 0],
+      "size": [4, 2],
+      "properties": {
+        "topic": "SmartDashboard/Match/Time",
+        "min": 0,
+        "max": 150,
+        "reversed": true
+      }
+    },
+    {
+      "type": "Graph",
+      "title": "MANUAL RPM",
+      "pos": [12, 2],
+      "size": [6, 4],
+      "properties": {
+        "topic": "SmartDashboard/Shooter/Manual Target RPM",
+        "min": 0,
+        "max": 5000,
+        "show_text": true
+      }
+    },
+    {
+      "type": "Number Slider",
+      "title": "MANUAL HOOD",
+      "pos": [18, 2],
+      "size": [6, 4],
+      "properties": {
+        "topic": "SmartDashboard/Shooter/Manual Target Hood",
+        "min": 0.0,
+        "max": 0.77,
+        "block_increment": 0.05
+      }
+    },
+    {
+      "type": "List",
+      "title": "PATHPLANNER COMMANDS",
+      "pos": [12, 6],
+      "size": [12, 4],
+      "properties": {
+        "topic": "SmartDashboard/Registered Named Commands"
+      }
+    },
+    {
+      "type": "Combo Box",
+      "title": "AUTO SELECTOR",
+      "pos": [0, 8],
+      "size": [8, 2],
+      "properties": {
+        "topic": "SmartDashboard/Auto Mode"
+      }
+    },
+    {
+      "type": "Number Bar",
+      "title": "BATTERY VOLTAGE",
+      "pos": [8, 8],
+      "size": [4, 2],
+      "properties": {
+        "topic": "SmartDashboard/Robot/Voltage",
+        "min": 8.0,
+        "max": 13.0
+      }
+    }
+  ]
+}
