@@ -50,7 +50,7 @@ public final class AutoRoutines {
     }
 
     public void configure() {
-        SmartDashboard.putData("Auto Mode", autoChooser);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
 
         // Hardcoded array to bypass the broken PathPlanner dynamic methods
         String[] commandNames = {
