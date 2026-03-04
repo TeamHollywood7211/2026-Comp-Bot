@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start to center home"
+            "pathName": "C-Start to center home"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot pickup and shoot"
+            "pathName": "C-ATTACK"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Center Autons",
   "choreoAuto": false
 }

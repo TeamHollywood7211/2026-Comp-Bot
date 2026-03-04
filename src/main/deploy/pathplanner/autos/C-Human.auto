@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start to center home"
+            "pathName": "C-Start to center home"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Home To Human"
+            "pathName": "C-Home To Human"
           }
         },
         {
@@ -25,13 +25,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Human To Home"
+            "pathName": "C-Human To Home"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Center Autons",
   "choreoAuto": false
 }
