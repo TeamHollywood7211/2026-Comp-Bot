@@ -30,7 +30,6 @@ public class RobotContainer {
     private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
     
-    @SuppressWarnings("unused")
     private final GamePhaseSubsystem gamePhase = new GamePhaseSubsystem();
     
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
@@ -69,6 +68,9 @@ public class RobotContainer {
         configureBindings();
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
+
+        // This allows the "START SIM MATCH" button in Elastic to trigger the simulation sequence
+        SmartDashboard.putData("START SIM MATCH", gamePhase.getSimulateMatchCommand(autoRoutines.getAutoChooser()));
     }
 
     private void configureBindings() {

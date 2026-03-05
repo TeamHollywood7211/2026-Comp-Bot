@@ -60,6 +60,14 @@ public final class AutoRoutines {
         SmartDashboard.putStringArray("Registered Named Commands", commandNames);
     }
 
+    /**
+     * Returns the SendableChooser used for selecting autonomous routines.
+     * Required for simulation bridge in RobotContainer.
+     */
+    public SendableChooser<Command> getAutoChooser() {
+        return autoChooser;
+    }
+
     public Command getSelectedAuto() {
         return autoChooser.getSelected();
     }

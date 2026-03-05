@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.util.Elastic;
@@ -34,7 +36,6 @@ public class GamePhaseSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Robot/Voltage", 0.0); 
         SmartDashboard.putNumber("Match/TimeToSwitch", 0.0); 
         
-        // RENAMED: Initialize with waiting text
         SmartDashboard.putString("Match/Who won Auto?", "WAITING FOR FMS...");
         
         if (RobotBase.isSimulation()) {
@@ -104,35 +105,28 @@ public class GamePhaseSubsystem extends SubsystemBase {
         SmartDashboard.putString("Match/Phase", currentPhase);
         SmartDashboard.putNumber("Match/Time", Math.max(0, matchTime));
         SmartDashboard.putBoolean("Match/HubActive", isHubActive);
-        SmartDashboard.putNumber("Match/TimeToSwitch",switchTime); 
+        SmartDashboard.putNumber("Match/TimeToSwitch", switchTime); 
     }
 
     private void checkHubStatus(double time, boolean isAuto, boolean isTeleop) {
         String gameData = DriverStation.getGameSpecificMessage();
         Optional<Alliance> myAlliance = DriverStation.getAlliance();
 
-        // --- UPDATED DISPLAY LOGIC ---
-        // We calculate the text HERE so it updates every loop, even if we return early later.
         String winnerText = "WAITING FOR FMS...";
         if (gameData != null && !gameData.isEmpty()) {
             if (gameData.contains("R")) winnerText = "RED WON AUTO";
             else if (gameData.contains("B")) winnerText = "BLUE WON AUTO";
             else winnerText = "UNKNOWN DATA: " + gameData;
         }
-        // Push to Dashboard immediately
         SmartDashboard.putString("Match/Who won Auto?", winnerText);
-        // -----------------------------
 
-        // 1. Safe States (Auto / Transition / EndGame)
         if (isAuto) { isHubActive = true; return; }
         if (isTeleop && (time > 130 || time <= 30)) { isHubActive = true; return; }
 
-        // 2. Data Check
         if (gameData == null || gameData.isEmpty() || myAlliance.isEmpty()) {
             isHubActive = true; return;
         }
 
-        // 3. Shift Logic
         boolean didRedWinAuto = gameData.contains("R");
         boolean amIRed = (myAlliance.get() == Alliance.Red);
         boolean myAllianceWonAuto = (didRedWinAuto == amIRed);
@@ -146,5 +140,41 @@ public class GamePhaseSubsystem extends SubsystemBase {
     private void resetFlags() {
         endgameAlertSent = false;
         allianceShiftAlertSent = false;
+    }
+
+    /**
+     * Creates a command to run a full simulated match sequence for testing.
+     * Logic based on 20s Auto, brief transition, and 140s Teleop.
+     */
+    public Command getSimulateMatchCommand(SendableChooser<Command> autoChooser) {
+        return Commands.sequence(
+            Commands.runOnce(() -> {
+                Alliance selected = simAlliance.getSelected();
+                DriverStationSim.setAllianceStationId(
+                    selected == Alliance.Red ? AllianceStationID.Red1 : AllianceStationID.Blue1
+                );
+            }),
+            // Start Auto
+            Commands.runOnce(() -> {
+                DriverStationSim.setAutonomous(true);
+                DriverStationSim.setEnabled(true);
+            }),
+            Commands.print("SIM: Autonomous Started"),
+            Commands.waitSeconds(20.0), // Matches your expected sim timing
+            // Transition
+            Commands.runOnce(() -> DriverStationSim.setEnabled(false)),
+            Commands.waitSeconds(0.5), // Matches your expected transition
+            // Start Teleop
+            Commands.runOnce(() -> {
+                DriverStationSim.setAutonomous(false);
+                DriverStationSim.setEnabled(true);
+            }),
+            Commands.print("SIM: Teleop Started"),
+            Commands.waitSeconds(140.0), // Matches your expected teleop timing
+            // End Match
+            Commands.runOnce(() -> DriverStationSim.setEnabled(false))
+        ).finallyDo(() -> DriverStationSim.setEnabled(false))
+         .ignoringDisable(true)
+         .withName("SimulateMatchCommand");
     }
 }
