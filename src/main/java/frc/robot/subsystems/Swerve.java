@@ -41,7 +41,6 @@ public class Swerve extends CommandSwerveDrivetrain {
                 TunerConstants.BackLeft,
                 TunerConstants.BackRight);
 
-        // PathPlanner is configured immediately upon subsystem creation
         configurePathPlanner();
     }
 
@@ -58,7 +57,7 @@ public class Swerve extends CommandSwerveDrivetrain {
                                     .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                                     .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
                     new PPHolonomicDriveController(
-                            new PIDConstants(10.0, 0.0, 0.0),
+                            new PIDConstants(5.0, 0.0, 0.0),
                             new PIDConstants(7.0, 0.0, 0.0)),
                     config,
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
@@ -73,8 +72,7 @@ public class Swerve extends CommandSwerveDrivetrain {
     }
 
     public void resetPose(Pose2d pose) {
-        this.seedFieldCentric();
-        this.resetRotation(pose.getRotation());
+        super.resetPose(pose);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {

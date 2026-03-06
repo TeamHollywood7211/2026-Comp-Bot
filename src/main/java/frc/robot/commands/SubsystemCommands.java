@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
 import frc.robot.subsystems.Hanger;
@@ -27,16 +28,9 @@ public final class SubsystemCommands {
     private final DoubleSupplier leftInput;
 
     public SubsystemCommands(
-        Swerve swerve,
-        Intake intake,
-        Floor floor,
-        Feeder feeder,
-        Shooter shooter,
-        Hood hood,
-        Hanger hanger,
-        Music music,
-        DoubleSupplier forwardInput,
-        DoubleSupplier leftInput
+        Swerve swerve, Intake intake, Floor floor, Feeder feeder,
+        Shooter shooter, Hood hood, Hanger hanger, Music music,
+        DoubleSupplier forwardInput, DoubleSupplier leftInput
     ) {
         this.swerve = swerve;
         this.intake = intake;
@@ -46,47 +40,44 @@ public final class SubsystemCommands {
         this.hood = hood;
         this.hanger = hanger;
         this.music = music;
-
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
     }
 
     public SubsystemCommands(
-        Swerve swerve,
-        Intake intake,
-        Floor floor,
-        Feeder feeder,
-        Shooter shooter,
-        Hood hood,
-        Hanger hanger,
-        Music music
+        Swerve swerve, Intake intake, Floor floor, Feeder feeder,
+        Shooter shooter, Hood hood, Hanger hanger, Music music
     ) {
-        this(
-            swerve,
-            intake,
-            floor,
-            feeder,
-            shooter,
-            hood,
-            hanger,
-            music,
-            () -> 0,
-            () -> 0
-        );
+        this(swerve, intake, floor, feeder, shooter, hood, hanger, music, () -> 0, () -> 0);
     }
 
+    // ---------------------------------------------------------
+    // TELEOP COMMAND
+    // ---------------------------------------------------------
     public Command aimAndShoot() {
-        // Fixed: We use the 3-argument constructor here. 
-        // This ensures AimAndDriveCommand ONLY drives, preventing it from fighting PrepareShotCommand over the flywheels.
         final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, forwardInput, leftInput);
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
         
         return Commands.parallel(
             aimAndDriveCommand,
-            Commands.waitSeconds(0.25)
-                .andThen(prepareShotCommand),
+            Commands.waitSeconds(0.25).andThen(prepareShotCommand),
             Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
                 .andThen(feed())
+        );
+    }
+
+    // ---------------------------------------------------------
+    // AUTO COMMAND (Configurable feed timeout)
+    // ---------------------------------------------------------
+    public Command autoAimAndShoot(double feedTimeoutSeconds) {
+        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, () -> 0, () -> 0);
+        final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
+        
+        return Commands.deadline(
+            Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
+                .andThen(feed().withTimeout(feedTimeoutSeconds)), 
+            aimAndDriveCommand,
+            Commands.waitSeconds(0.25).andThen(prepareShotCommand)
         );
     }
 

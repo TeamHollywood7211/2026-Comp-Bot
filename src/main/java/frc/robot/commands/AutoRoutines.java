@@ -1,14 +1,27 @@
 package frc.robot.commands;
 
+import java.util.Set;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.*;
+
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Floor;
+import frc.robot.subsystems.Hanger;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Music;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Swerve;
 
 public final class AutoRoutines {
+    private final Swerve swerve;
     private final Intake intake;
     private final Shooter shooter;
     private final Hood hood;
@@ -22,6 +35,7 @@ public final class AutoRoutines {
             Swerve swerve, Intake intake, Floor floor, Feeder feeder,
             Shooter shooter, Hood hood, Hanger hanger, Limelight limelight, Music music) {
         
+        this.swerve = swerve;
         this.intake = intake;
         this.shooter = shooter;
         this.hood = hood;
@@ -37,11 +51,13 @@ public final class AutoRoutines {
     private void registerNamedCommands() {
         NamedCommands.registerCommand("Intake", intake.intakeCommand());
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        NamedCommands.registerCommand("AimAndShoot", subsystemCommands.aimAndShoot().withTimeout(5));
         
-        NamedCommands.registerCommand("SpinUp", Commands.parallel(
-                shooter.spinUpCommand(2600),
-                hood.positionCommand(0.32)));
+        NamedCommands.registerCommand("AimAndShoot 1s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(1.0), Set.of(swerve, shooter, hood)));
+        NamedCommands.registerCommand("AimAndShoot 2s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(2.0), Set.of(swerve, shooter, hood)));
+        NamedCommands.registerCommand("AimAndShoot 3s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(3.0), Set.of(swerve, shooter, hood)));
+        NamedCommands.registerCommand("AimAndShoot 7s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(7.0), Set.of(swerve, shooter, hood)));
+        
+        NamedCommands.registerCommand("SpinUp", Commands.defer(() -> Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)), Set.of(shooter, hood)));
 
         NamedCommands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
         NamedCommands.registerCommand("HangFinish", hanger.positionCommand(Hanger.Position.HUNG));
@@ -52,18 +68,13 @@ public final class AutoRoutines {
     public void configure() {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        // Hardcoded array to bypass the broken PathPlanner dynamic methods
         String[] commandNames = {
-            "Intake", "StowIntake", "AimAndShoot", "SpinUp", 
+            "Intake", "StowIntake", "AimAndShoot 1s", "AimAndShoot 2s", "AimAndShoot 3s", "AimAndShoot 7s", "SpinUp", 
             "HangReady", "HangFinish", "Play Cali Girls", "Stop Music"
         };
         SmartDashboard.putStringArray("Registered Named Commands", commandNames);
     }
 
-    /**
-     * Returns the SendableChooser used for selecting autonomous routines.
-     * Required for simulation bridge in RobotContainer.
-     */
     public SendableChooser<Command> getAutoChooser() {
         return autoChooser;
     }
