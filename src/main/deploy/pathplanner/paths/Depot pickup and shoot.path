@@ -36,7 +36,7 @@
         "y": 7.5
       },
       "prevControl": {
-        "x": 0.24057777777777767,
+        "x": 0.2405777777777776,
         "y": 7.504022222222222
       },
       "nextControl": {
@@ -88,7 +88,7 @@
       "command": null
     },
     {
-      "name": "AimAndShoot",
+      "name": "AimAndShoot 3s",
       "waypointRelativePos": 3.0,
       "endWaypointRelativePos": null,
       "command": null
