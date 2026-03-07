@@ -37,8 +37,8 @@ public class Hanger extends SubsystemBase {
     public enum Position {
         HOMED(0),
         EXTEND_HOPPER(2),
-        HANGING(6),
-        HUNG(0.2);
+        HANGING(5.5),
+        HUNG(0.1);
 
         private final double inches;
 
@@ -59,7 +59,7 @@ public class Hanger extends SubsystemBase {
     private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
     private final VoltageOut voltageRequest = new VoltageOut(0);
 
-    private boolean isHomed = false;
+    private boolean isHomed = true;
 
     public Hanger() {
         motor = new TalonFX(Ports.kHanger, Ports.kRoboRioCANBus);
@@ -115,8 +115,8 @@ public class Hanger extends SubsystemBase {
 
     public Command homingCommand() {
         return Commands.sequence(
-            runOnce(() -> setPercentOutput(-0.05)),
-            Commands.waitUntil(() -> motor.getSupplyCurrent().getValue().in(Amps) > 0.4),
+            runOnce(() -> setPercentOutput(-0.15)),
+            Commands.waitUntil(() -> motor.getSupplyCurrent().getValue().in(Amps) > 0.5),
             runOnce(() -> {
                 motor.setPosition(Position.HOMED.motorAngle());
                 isHomed = true;

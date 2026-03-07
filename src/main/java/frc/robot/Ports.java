@@ -8,16 +8,21 @@ public final class Ports {
     public static final CANBus kCANivoreCANBus = new CANBus("main");
 
     // Talon FX IDs
-    public static final int kIntakePivot = 10;
-    public static final int kIntakeRollers = 11;
-    public static final int kFloor = 12;
-    public static final int kFeeder = 13;
+    public static final int kIntakePivot = 11;
+    public static final int kIntakeRollers = 46;
+    public static final int kIntakeCanR = 47;
+    public static final int kFloor = 48;
+    public static final int kFeeder = 45;
     public static final int kShooterLeft = 41;
     public static final int kShooterMiddle = 42;
     public static final int kShooterRight = 43;
     public static final int kHanger = 44;
 
-    // PWM Ports
+    // PWM Ports (Outputs)
     public static final int kHoodLeftServo = 0;
     public static final int kHoodRightServo = 1;
+    public static final int kIntakeLimitSwitch = 2;
+
+    // LimeLight Cam Host Names
+    public static final String kLimeLightShooter = "limelight-right";
 }

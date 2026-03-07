@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5,
-        "y": 0.65
+        "x": 3.443880171184022,
+        "y": 4.015592011412268
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.491544444444445,
-        "y": 3.9765333333333337
+        "x": 4.443880171184021,
+        "y": 4.015592011412268
       },
       "isLocked": false,
-      "linkedName": "Human Player"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.0
+        "x": 2.344094151212553,
+        "y": 4.015592011412268
       },
       "prevControl": {
-        "x": 0.5036777777777786,
-        "y": 0.6049555555555544
+        "x": 1.3440941512125528,
+        "y": 4.015592011412268
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "AimAndShoot 3s",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

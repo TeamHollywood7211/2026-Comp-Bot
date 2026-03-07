@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -18,33 +19,28 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.LimelightHelpers;
-import frc.robot.generated.TunerConstants;
-import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
-/**
- * Custom Swerve subsystem extending the generated TunerSwerveDrivetrain.
- * This file is where we add PathPlanner and Vision logic.
- */
-public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
+import frc.robot.LimelightHelpers;
+import frc.robot.Ports;
+import frc.robot.generated.TunerConstants;
+
+public class Swerve extends CommandSwerveDrivetrain {
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     private boolean m_hasAppliedOperatorPerspective = false;
 
+    private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
+            .withDriveRequestType(DriveRequestType.Velocity);
+
     public Swerve() {
         super(
-            TunerConstants.DrivetrainConstants, 
-            0,
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            VecBuilder.fill(0.1, 0.1, 0.1),
-            TunerConstants.FrontLeft, 
-            TunerConstants.FrontRight, 
-            TunerConstants.BackLeft, 
-            TunerConstants.BackRight
-        );
+                TunerConstants.DrivetrainConstants,
+                TunerConstants.FrontLeft,
+                TunerConstants.FrontRight,
+                TunerConstants.BackLeft,
+                TunerConstants.BackRight);
+
         configurePathPlanner();
     }
 
@@ -53,37 +49,30 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
             RobotConfig config = RobotConfig.fromGUISettings();
 
             AutoBuilder.configure(
-                () -> this.getState().Pose, 
-                this::resetPose,           
-                this::getRobotRelativeSpeeds, 
-                (speeds, feedforwards) -> setControl(new SwerveRequest.ApplyRobotSpeeds()
-                    .withSpeeds(speeds)
-                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
-                new PPHolonomicDriveController(
-                    new PIDConstants(5.0, 0.0, 0.0), 
-                    new PIDConstants(5.0, 0.0, 0.0)  
-                ),
-                config,
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                this
-            );
+                    () -> this.getState().Pose,
+                    this::resetPose,
+                    () -> this.getState().Speeds,
+                    (speeds, feedforwards) -> setControl(
+                            autoRequest.withSpeeds(ChassisSpeeds.discretize(speeds, 0.020))
+                                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(5.0, 0.0, 0.0),
+                            new PIDConstants(7.0, 0.0, 0.0)),
+                    config,
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this);
         } catch (Exception e) {
             DriverStation.reportError("PathPlanner config failed: " + e.getMessage(), e.getStackTrace());
         }
     }
 
-    /**
-     * Required for PathPlanner.
-     * Uses the public getKinematics() method to avoid private access errors.
-     */
-    public ChassisSpeeds getRobotRelativeSpeeds() {
-        return this.getKinematics().toChassisSpeeds(this.getState().ModuleStates);
+    public Pose2d getStatePose() {
+        return this.getState().Pose;
     }
 
     public void resetPose(Pose2d pose) {
-        this.resetRotation(pose.getRotation());
-        this.seedFieldCentric();
+        super.resetPose(pose);
     }
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
@@ -94,22 +83,29 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
     public void periodic() {
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
-                setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation
-                );
+                this.setOperatorPerspectiveForward(
+                        allianceColor == Alliance.Red
+                                ? kRedAlliancePerspectiveRotation
+                                : kBlueAlliancePerspectiveRotation);
                 if (!m_hasAppliedOperatorPerspective) {
                     seedFieldCentric();
                 }
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+        updateVision();
+    }
 
-        /* Auto-update vision */
-        var visionPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
-        if (LimelightHelpers.getTV("limelight")) {
-            this.addVisionMeasurement(visionPose, Timer.getFPGATimestamp());
+    private void updateVision() {
+        double yaw = this.getState().Pose.getRotation().getDegrees();
+        LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, 0, 0, 0, 0, 0);
+
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
+                .getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
+
+        if (mt2 != null && mt2.tagCount > 0) {
+            this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
+            this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
         }
     }
 
@@ -120,10 +116,10 @@ public class Swerve extends TunerSwerveDrivetrain implements Subsystem {
 
     @Override
     public void addVisionMeasurement(
-        Pose2d visionRobotPoseMeters, 
-        double timestampSeconds, 
-        Matrix<N3, N1> visionMeasurementStdDevs
-    ) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+            Pose2d visionRobotPoseMeters,
+            double timestampSeconds,
+            Matrix<N3, N1> visionMeasurementStdDevs) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
+                visionMeasurementStdDevs);
     }
 }

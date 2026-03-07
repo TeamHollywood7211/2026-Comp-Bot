@@ -85,7 +85,7 @@
       },
       "prevControl": {
         "x": 7.404788011072248,
-        "y": 0.8566058909122384
+        "y": 0.8566058909122383
       },
       "nextControl": {
         "x": 6.9952119889277515,
@@ -180,7 +180,7 @@
       "command": null
     },
     {
-      "name": "AimAndShoot",
+      "name": "AimAndShoot 7s",
       "waypointRelativePos": 8,
       "endWaypointRelativePos": null,
       "command": null

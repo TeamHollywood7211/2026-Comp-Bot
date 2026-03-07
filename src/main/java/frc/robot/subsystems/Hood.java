@@ -49,6 +49,13 @@ public class Hood extends SubsystemBase {
         targetPosition = clampedPosition;
     }
 
+    /** * Stops the hood movement by setting the target to the current position.
+     * This fulfills the requirement for the manual trigger in RobotContainer.
+     */
+    public void stop() {
+        setPosition(currentPosition);
+    }
+
     /** Expects a position between 0.0 and 1.0 */
     public Command positionCommand(double position) {
         return runOnce(() -> setPosition(position))

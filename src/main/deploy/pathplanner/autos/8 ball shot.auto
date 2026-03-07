@@ -1,0 +1,49 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "8 ball Shot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AimAndShoot 2s"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shot to Human"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Human to Shot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AimAndShoot 7s"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
