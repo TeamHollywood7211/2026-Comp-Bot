@@ -47,10 +47,10 @@ public class Intake extends SubsystemBase {
     }
 
     public enum Position {
-        HOMED(110),
-        STOWED(100),
-        INTAKE(-45),
-        AGITATE(20);
+        HOMED(0 ),
+        STOWED(0),
+        INTAKE(-140),
+        AGITATE(-120);
 
         private final double degrees;
 
@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase {
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0);
 
-    private boolean isHomed = false;
+    private boolean isHomed = true;
 
     public Intake() {
         pivotMotor = new TalonFX(Ports.kIntakePivot, Ports.kCANivoreCANBus);
