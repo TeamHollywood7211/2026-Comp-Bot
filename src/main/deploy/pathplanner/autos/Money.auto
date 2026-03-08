@@ -1,3 +1,4 @@
+// src/main/deploy/pathplanner/autos/Money.auto
 {
   "version": "2025.0",
   "command": {
@@ -11,9 +12,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "AimAndShoot 2s"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 2.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimAndShoot"
+                }
+              }
+            ]
           }
         },
         {
@@ -35,9 +49,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "AimAndShoot 7s"
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 7.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimAndShoot"
+                }
+              }
+            ]
           }
         }
       ]

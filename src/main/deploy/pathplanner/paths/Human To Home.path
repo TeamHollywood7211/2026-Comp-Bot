@@ -1,3 +1,4 @@
+// src/main/deploy/pathplanner/paths/Human To Home.path
 {
   "version": "2025.0",
   "waypoints": [
@@ -33,10 +34,28 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "AimAndShoot 3s",
+      "name": "AimAndShoot",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "deadline",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 3.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "AimAndShoot"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {

@@ -1,3 +1,4 @@
+// src/main/deploy/pathplanner/autos/wowitsthefirstautobeingusedever.auto
 {
   "version": "2025.0",
   "command": {
@@ -11,15 +12,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "AimAndShoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 8.0
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 8.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimAndShoot"
+                }
+              }
+            ]
           }
         },
         {

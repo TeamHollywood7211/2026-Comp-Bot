@@ -1,3 +1,4 @@
+// src/main/deploy/pathplanner/paths/ATTACK.path
 {
   "version": "2025.0",
   "waypoints": [
@@ -180,10 +181,28 @@
       "command": null
     },
     {
-      "name": "AimAndShoot 7s",
+      "name": "AimAndShoot",
       "waypointRelativePos": 8,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "deadline",
+        "data": {
+          "commands": [
+            {
+              "type": "wait",
+              "data": {
+                "waitTime": 7.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "AimAndShoot"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
