@@ -2,15 +2,14 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import frc.robot.Constants.Driving;
 import frc.robot.commands.AutoRoutines;
@@ -20,6 +19,17 @@ import frc.util.Elastic;
 import frc.util.SwerveTelemetry;
 
 public class RobotContainer {
+    public enum SpeedMode {
+        SLOW(0.25),
+        MEDIUM(0.50),
+        FAST(1.0);
+
+        public final double multiplier;
+        SpeedMode(double multiplier) {
+            this.multiplier = multiplier;
+        }
+    }
+
     private final Swerve swerve = new Swerve();
     private final Intake intake = new Intake();
     private final Floor floor = new Floor();
@@ -41,6 +51,7 @@ public class RobotContainer {
 
     private double manualRPM = 3000.0;
     private double manualHoodPos = 0.2; 
+    private SpeedMode currentSpeedMode = SpeedMode.FAST;
 
     private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
             .withDeadband(0.1).withRotationalDeadband(0.1)
@@ -48,8 +59,8 @@ public class RobotContainer {
 
     private final SubsystemCommands subsystemCommands = new SubsystemCommands(
             swerve, intake, floor, feeder, shooter, hood, hanger, music, leds,
-            () -> -driver.getLeftY(),
-            () -> -driver.getLeftX());
+            () -> -driver.getLeftY() * currentSpeedMode.multiplier,
+            () -> -driver.getLeftX() * currentSpeedMode.multiplier);
 
     public RobotContainer() {
         autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music, leds);
@@ -73,6 +84,20 @@ public class RobotContainer {
         SmartDashboard.putData("START SIM MATCH", gamePhase.getSimulateMatchCommand(autoRoutines.getAutoChooser()));
     }
 
+    private void cycleSpeedMode() {
+        switch (currentSpeedMode) {
+            case FAST:
+                currentSpeedMode = SpeedMode.SLOW;
+                break;
+            case SLOW:
+                currentSpeedMode = SpeedMode.MEDIUM;
+                break;
+            case MEDIUM:
+                currentSpeedMode = SpeedMode.FAST;
+                break;
+        }
+    }
+
     private void configureBindings() {
         configureManualDriveBindings();
 
@@ -81,6 +106,7 @@ public class RobotContainer {
                 .onTrue(hanger.homingCommand())
                 .onTrue(Commands.runOnce(leds::setAllianceColor, leds));
 
+        driver.leftBumper().onTrue(Commands.runOnce(this::cycleSpeedMode));
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
@@ -121,9 +147,9 @@ public class RobotContainer {
     private void configureManualDriveBindings() {
         swerve.setDefaultCommand(
                 swerve.applyRequest(() -> m_driveRequest
-                        .withVelocityX(-driver.getLeftY() * Driving.kMaxSpeed.in(MetersPerSecond))
-                        .withVelocityY(-driver.getLeftX() * Driving.kMaxSpeed.in(MetersPerSecond))
-                        .withRotationalRate(-driver.getRightX() * 6.28)));
+                        .withVelocityX(-driver.getLeftY() * Driving.kMaxSpeed.in(MetersPerSecond) * currentSpeedMode.multiplier)
+                        .withVelocityY(-driver.getLeftX() * Driving.kMaxSpeed.in(MetersPerSecond) * currentSpeedMode.multiplier)
+                        .withRotationalRate(-driver.getRightX() * 6.28 * currentSpeedMode.multiplier)));
 
         driver.back().onTrue(swerve.runOnce(swerve::seedFieldCentric));
     }
@@ -131,6 +157,7 @@ public class RobotContainer {
     public void updateDashboard() {
         SmartDashboard.putNumber("Shooter/Manual Target RPM", manualRPM);
         SmartDashboard.putNumber("Shooter/Manual Target Hood", manualHoodPos);
+        SmartDashboard.putString("Drive/Speed Mode", currentSpeedMode.name());
     }
 
     public Command getAutonomousCommand() {
