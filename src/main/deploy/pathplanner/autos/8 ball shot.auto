@@ -37,6 +37,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ApproachStation"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 3.0
