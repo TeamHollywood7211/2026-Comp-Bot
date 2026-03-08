@@ -1,14 +1,14 @@
+// src/main/java/frc/robot/commands/AutoRoutines.java
 package frc.robot.commands;
 
 import java.util.Set;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
@@ -53,10 +53,8 @@ public final class AutoRoutines {
         NamedCommands.registerCommand("Intake", intake.intakeCommand());
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         
-        NamedCommands.registerCommand("AimAndShoot 1s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(1.0), Set.of(swerve, shooter, hood)));
-        NamedCommands.registerCommand("AimAndShoot 2s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(2.0), Set.of(swerve, shooter, hood)));
-        NamedCommands.registerCommand("AimAndShoot 3s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(3.0), Set.of(swerve, shooter, hood)));
-        NamedCommands.registerCommand("AimAndShoot 7s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(7.0), Set.of(swerve, shooter, hood)));
+        // Switched to use the unified aimAndShoot method
+        NamedCommands.registerCommand("AimAndShoot", Commands.defer(() -> subsystemCommands.aimAndShoot(), Set.of(swerve, shooter, hood)));
         
         NamedCommands.registerCommand("SpinUp", Commands.defer(() -> Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)), Set.of(shooter, hood)));
 
@@ -70,7 +68,7 @@ public final class AutoRoutines {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         String[] commandNames = {
-            "Intake", "StowIntake", "AimAndShoot 1s", "AimAndShoot 2s", "AimAndShoot 3s", "AimAndShoot 7s", "SpinUp", 
+            "Intake", "StowIntake", "AimAndShoot", "SpinUp", 
             "HangReady", "HangFinish", "Play Cali Girls", "Stop Music"
         };
         SmartDashboard.putStringArray("Registered Named Commands", commandNames);
