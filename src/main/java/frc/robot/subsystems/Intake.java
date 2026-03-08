@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/subsystems/Intake.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants.KrakenX60;
 import frc.robot.Ports;
 
@@ -47,10 +49,10 @@ public class Intake extends SubsystemBase {
     }
 
     public enum Position {
-        HOMED(0 ),
+        HOMED(0),
         STOWED(0),
         INTAKE(-140),
-        AGITATE(-120);
+        AGITATE(-100);
 
         private final double degrees;
 
