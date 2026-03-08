@@ -42,6 +42,7 @@ public class RobotContainer {
     private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
     private final Leds leds = new Leds();
+    private final FrontRange frontRange = new FrontRange();
     
     private final GamePhaseSubsystem gamePhase = new GamePhaseSubsystem();
     
