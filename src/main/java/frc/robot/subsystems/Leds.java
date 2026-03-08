@@ -48,16 +48,13 @@ public class Leds extends SubsystemBase {
             ? new RGBWColor(255, 0, 0, 0) 
             : new RGBWColor(0, 0, 255, 0);
 
-        // Keep underglow as alliance color
         candle.setControl(new SolidColor(0, flairOffset - 1).withColor(underglowColor));
 
         if (locked) {
             candle.setControl(new EmptyAnimation(0));
             candle.setControl(new EmptyAnimation(1));
-            // Flair goes green
             candle.setControl(new SolidColor(flairOffset, totalLeds - 1).withColor(new RGBWColor(0, 255, 0, 0)));
         } else {
-            // Flair goes police mode
             candle.setControl(new SolidColor(flairOffset, totalLeds - 1).withColor(new RGBWColor(0, 0, 0, 0)));
             
             candle.setControl(new StrobeAnimation(flairOffset, flairOffset + (flairCount / 2) - 1)
@@ -90,5 +87,14 @@ public class Leds extends SubsystemBase {
         candle.setControl(new EmptyAnimation(1));
         
         candle.setControl(new SolidColor(0, totalLeds - 1).withColor(new RGBWColor(0, 255, 0, 0)));
+    }
+
+    public void setGreenFlash() {
+        candle.setControl(new EmptyAnimation(0));
+        candle.setControl(new EmptyAnimation(1));
+        
+        candle.setControl(new StrobeAnimation(0, totalLeds - 1)
+            .withColor(new RGBWColor(0, 255, 0, 0))
+            .withSlot(0));
     }
 }

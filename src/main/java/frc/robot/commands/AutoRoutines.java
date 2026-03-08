@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
+import frc.robot.subsystems.FrontRange;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -34,7 +35,7 @@ public final class AutoRoutines {
 
     public AutoRoutines(
             Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-            Shooter shooter, Hood hood, Hanger hanger, Limelight limelight, Music music, Leds leds) {
+            Shooter shooter, Hood hood, Hanger hanger, Limelight limelight, Music music, Leds leds, FrontRange frontRange) {
         
         this.swerve = swerve;
         this.intake = intake;
@@ -43,7 +44,7 @@ public final class AutoRoutines {
         this.hanger = hanger;
         this.music = music;
 
-        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds);
+        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange);
 
         registerNamedCommands();
         this.autoChooser = AutoBuilder.buildAutoChooser();
@@ -52,10 +53,8 @@ public final class AutoRoutines {
     private void registerNamedCommands() {
         NamedCommands.registerCommand("Intake", intake.intakeCommand());
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        
-        // Switched to use the unified aimAndShoot method
+        NamedCommands.registerCommand("ApproachStation", subsystemCommands.approachStationCommand());
         NamedCommands.registerCommand("AimAndShoot", Commands.defer(() -> subsystemCommands.aimAndShoot(), Set.of(swerve, shooter, hood)));
-        
         NamedCommands.registerCommand("SpinUp", Commands.defer(() -> Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)), Set.of(shooter, hood)));
 
         NamedCommands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
@@ -68,7 +67,7 @@ public final class AutoRoutines {
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
         String[] commandNames = {
-            "Intake", "StowIntake", "AimAndShoot", "SpinUp", 
+            "Intake", "StowIntake", "ApproachStation", "AimAndShoot", "SpinUp", 
             "HangReady", "HangFinish", "Play Cali Girls", "Stop Music"
         };
         SmartDashboard.putStringArray("Registered Named Commands", commandNames);

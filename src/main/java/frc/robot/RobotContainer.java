@@ -61,12 +61,12 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SubsystemCommands subsystemCommands = new SubsystemCommands(
-            swerve, intake, floor, feeder, shooter, hood, hanger, music, leds,
+            swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange,
             () -> -driver.getLeftY() * currentSpeedMode.multiplier,
             () -> -driver.getLeftX() * currentSpeedMode.multiplier);
 
     public RobotContainer() {
-        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music, leds);
+        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music, leds, frontRange);
 
         LimelightHelpers.setLimelightNTDouble(Ports.kLimeLightShooter, "stream", 1);
         
@@ -115,6 +115,7 @@ public class RobotContainer {
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
         driver.b().whileTrue(subsystemCommands.ejectJamCommand());
+        driver.x().whileTrue(subsystemCommands.approachStationCommand());
 
         operator.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
         operator.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(0, manualRPM - 250)));

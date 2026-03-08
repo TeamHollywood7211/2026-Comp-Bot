@@ -34,9 +34,14 @@ public class FrontRange extends SubsystemBase {
         return current.gt(kTargetDistance.minus(kTolerance)) && current.lt(kTargetDistance.plus(kTolerance));
     }
 
+    public boolean isCloseEnough() {
+        return getDistance().lt(kTargetDistance.plus(kTolerance));
+    }
+
     @Override
     public void initSendable(SendableBuilder builder) {
         builder.addDoubleProperty("Distance (Inches)", () -> getDistance().in(Inches), null);
         builder.addBooleanProperty("At Target Distance", this::isAtTargetDistance, null);
+        builder.addBooleanProperty("Is Close Enough", this::isCloseEnough, null);
     }
 }

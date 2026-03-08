@@ -3,12 +3,15 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
+import frc.robot.subsystems.FrontRange;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -27,13 +30,14 @@ public final class SubsystemCommands {
     private final Hanger hanger;
     private final Music music;
     private final Leds leds;
+    private final FrontRange frontRange;
 
     private final DoubleSupplier forwardInput;
     private final DoubleSupplier leftInput;
 
     public SubsystemCommands(
         Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds,
+        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds, FrontRange frontRange,
         DoubleSupplier forwardInput, DoubleSupplier leftInput
     ) {
         this.swerve = swerve;
@@ -45,15 +49,30 @@ public final class SubsystemCommands {
         this.hanger = hanger;
         this.music = music;
         this.leds = leds;
+        this.frontRange = frontRange;
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
     }
 
     public SubsystemCommands(
         Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds
+        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds, FrontRange frontRange
     ) {
-        this(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, () -> 0, () -> 0);
+        this(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange, () -> 0, () -> 0);
+    }
+
+    public Command approachStationCommand() {
+        final SwerveRequest.RobotCentric forwardRequest = new SwerveRequest.RobotCentric()
+            .withVelocityX(0.75).withVelocityY(0).withRotationalRate(0); 
+        final SwerveRequest.SwerveDriveBrake brakeRequest = new SwerveRequest.SwerveDriveBrake();
+
+        return Commands.sequence(
+            swerve.applyRequest(() -> forwardRequest).until(frontRange::isCloseEnough),
+            Commands.parallel(
+                swerve.applyRequest(() -> brakeRequest).withTimeout(0.2), 
+                Commands.runEnd(leds::setGreenFlash, leds::setAllianceColor, leds).withTimeout(3.0)
+            )
+        );
     }
 
     public Command aimAndShoot() {
