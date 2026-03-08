@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/RobotContainer.java
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -29,6 +30,7 @@ public class RobotContainer {
     private final Hanger hanger = new Hanger();
     private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
+    private final Leds leds = new Leds();
     
     private final GamePhaseSubsystem gamePhase = new GamePhaseSubsystem();
     
@@ -69,7 +71,6 @@ public class RobotContainer {
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
 
-        // This allows the "START SIM MATCH" button in Elastic to trigger the simulation sequence
         SmartDashboard.putData("START SIM MATCH", gamePhase.getSimulateMatchCommand(autoRoutines.getAutoChooser()));
     }
 
@@ -78,7 +79,8 @@ public class RobotContainer {
 
         RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
                 .onTrue(intake.homingCommand())
-                .onTrue(hanger.homingCommand());
+                .onTrue(hanger.homingCommand())
+                .onTrue(Commands.runOnce(leds::setAllianceColor, leds));
 
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
