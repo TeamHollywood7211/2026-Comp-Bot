@@ -1,10 +1,6 @@
-// src/main/java/frc/robot/RobotContainer.java
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -12,6 +8,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import frc.robot.Constants.Driving;
 import frc.robot.commands.AutoRoutines;
@@ -48,12 +47,12 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SubsystemCommands subsystemCommands = new SubsystemCommands(
-            swerve, intake, floor, feeder, shooter, hood, hanger, music,
+            swerve, intake, floor, feeder, shooter, hood, hanger, music, leds,
             () -> -driver.getLeftY(),
             () -> -driver.getLeftX());
 
     public RobotContainer() {
-        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music);
+        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music, leds);
 
         LimelightHelpers.setLimelightNTDouble(Ports.kLimeLightShooter, "stream", 1);
         

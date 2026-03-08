@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/commands/SubsystemCommands.java
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
@@ -10,6 +11,7 @@ import frc.robot.subsystems.Floor;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Music;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
@@ -23,13 +25,14 @@ public final class SubsystemCommands {
     private final Hood hood;
     private final Hanger hanger;
     private final Music music;
+    private final Leds leds;
 
     private final DoubleSupplier forwardInput;
     private final DoubleSupplier leftInput;
 
     public SubsystemCommands(
         Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-        Shooter shooter, Hood hood, Hanger hanger, Music music,
+        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds,
         DoubleSupplier forwardInput, DoubleSupplier leftInput
     ) {
         this.swerve = swerve;
@@ -40,15 +43,16 @@ public final class SubsystemCommands {
         this.hood = hood;
         this.hanger = hanger;
         this.music = music;
+        this.leds = leds;
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
     }
 
     public SubsystemCommands(
         Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-        Shooter shooter, Hood hood, Hanger hanger, Music music
+        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds
     ) {
-        this(swerve, intake, floor, feeder, shooter, hood, hanger, music, () -> 0, () -> 0);
+        this(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, () -> 0, () -> 0);
     }
 
     // ---------------------------------------------------------
@@ -60,6 +64,7 @@ public final class SubsystemCommands {
         
         return Commands.parallel(
             aimAndDriveCommand,
+            Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
             Commands.waitSeconds(0.25).andThen(prepareShotCommand),
             Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
                 .andThen(feed())
@@ -77,6 +82,7 @@ public final class SubsystemCommands {
             Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
                 .andThen(feed().withTimeout(feedTimeoutSeconds)), 
             aimAndDriveCommand,
+            Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
             Commands.waitSeconds(0.25).andThen(prepareShotCommand)
         );
     }

@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/subsystems/Leds.java
 package frc.robot.subsystems;
 
 import java.util.Optional;
@@ -41,11 +42,39 @@ public class Leds extends SubsystemBase {
         }
     }
 
+    public void setAimingMode(boolean locked) {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        RGBWColor underglowColor = (alliance.isPresent() && alliance.get() == Alliance.Red) 
+            ? new RGBWColor(255, 0, 0, 0) 
+            : new RGBWColor(0, 0, 255, 0);
+
+        // Keep underglow as alliance color
+        candle.setControl(new SolidColor(0, flairOffset - 1).withColor(underglowColor));
+
+        if (locked) {
+            candle.setControl(new EmptyAnimation(0));
+            candle.setControl(new EmptyAnimation(1));
+            // Flair goes green
+            candle.setControl(new SolidColor(flairOffset, totalLeds - 1).withColor(new RGBWColor(0, 255, 0, 0)));
+        } else {
+            // Flair goes police mode
+            candle.setControl(new SolidColor(flairOffset, totalLeds - 1).withColor(new RGBWColor(0, 0, 0, 0)));
+            
+            candle.setControl(new StrobeAnimation(flairOffset, flairOffset + (flairCount / 2) - 1)
+                .withColor(new RGBWColor(255, 0, 0, 0))
+                .withSlot(0));
+                
+            candle.setControl(new StrobeAnimation(flairOffset + (flairCount / 2), flairOffset + flairCount - 1)
+                .withColor(new RGBWColor(0, 0, 255, 0))
+                .withSlot(1));
+        }
+    }
+
     public void setPoliceMode() {
         candle.setControl(new EmptyAnimation(0));
         candle.setControl(new EmptyAnimation(1));
         
-        candle.setControl(new SolidColor(flairOffset, flairOffset + flairCount - 1).withColor(new RGBWColor(0, 0, 0, 0)));
+        candle.setControl(new SolidColor(flairOffset, totalLeds - 1).withColor(new RGBWColor(0, 0, 0, 0)));
         
         candle.setControl(new StrobeAnimation(flairOffset, flairOffset + (flairCount / 2) - 1)
             .withColor(new RGBWColor(255, 0, 0, 0))
