@@ -1,9 +1,11 @@
+// src/main/java/frc/robot/RobotContainer.java
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -111,6 +113,7 @@ public class RobotContainer {
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+        driver.b().whileTrue(subsystemCommands.ejectJamCommand());
 
         operator.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
         operator.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(0, manualRPM - 250)));

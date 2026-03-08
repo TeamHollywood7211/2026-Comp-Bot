@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/subsystems/Floor.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -22,7 +23,8 @@ import frc.robot.Ports;
 public class Floor extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        FEED(0.83);
+        FEED(0.83),
+        REVERSE(-0.83);
 
         private final double percentOutput;
 
@@ -66,8 +68,16 @@ public class Floor extends SubsystemBase {
         );
     }
 
+    public void stop() {
+        set(Speed.STOP);
+    }
+
     public Command feedCommand() {
-        return startEnd(() -> set(Speed.FEED), () -> set(Speed.STOP));
+        return startEnd(() -> set(Speed.FEED), this::stop);
+    }
+
+    public Command reverseCommand() {
+        return startEnd(() -> set(Speed.REVERSE), this::stop);
     }
 
     @Override

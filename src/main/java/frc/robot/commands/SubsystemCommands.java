@@ -55,9 +55,6 @@ public final class SubsystemCommands {
         this(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, () -> 0, () -> 0);
     }
 
-    // ---------------------------------------------------------
-    // TELEOP COMMAND
-    // ---------------------------------------------------------
     public Command aimAndShoot() {
         final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, forwardInput, leftInput);
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
@@ -71,9 +68,6 @@ public final class SubsystemCommands {
         );
     }
 
-    // ---------------------------------------------------------
-    // AUTO COMMAND (Configurable feed timeout)
-    // ---------------------------------------------------------
     public Command autoAimAndShoot(double feedTimeoutSeconds) {
         final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, () -> 0, () -> 0);
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
@@ -91,6 +85,25 @@ public final class SubsystemCommands {
         return shooter.dashboardSpinUpCommand()
             .andThen(feed())
             .handleInterrupt(() -> shooter.stop());
+    }
+
+    public Command ejectJamCommand() {
+        return Commands.repeatingSequence(
+            Commands.parallel(
+                shooter.runReverseCommand(),
+                feeder.reverseCommand(),
+                floor.reverseCommand()
+            ).until(shooter::isJammed),
+            Commands.parallel(
+                shooter.spinUpCommand(1000), 
+                feeder.feedCommand(),
+                floor.feedCommand()
+            ).withTimeout(0.25)
+        ).finallyDo(() -> {
+            shooter.stop();
+            feeder.stop();
+            floor.stop();
+        });
     }
 
     private Command feed() {
