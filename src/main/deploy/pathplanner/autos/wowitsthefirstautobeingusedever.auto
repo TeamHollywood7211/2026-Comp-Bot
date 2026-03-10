@@ -1,4 +1,3 @@
-// src/main/deploy/pathplanner/autos/wowitsthefirstautobeingusedever.auto
 {
   "version": "2025.0",
   "command": {
@@ -28,12 +27,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
           }
         }
       ]
