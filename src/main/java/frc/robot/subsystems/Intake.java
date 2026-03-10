@@ -1,4 +1,3 @@
-// src/main/java/frc/robot/subsystems/Intake.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -11,6 +10,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -21,7 +21,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,16 +34,16 @@ import frc.robot.Ports;
 public class Intake extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        INTAKE(0.58);
+        INTAKE(3900); 
 
-        private final double percentOutput;
+        private final double rpm;
 
-        private Speed(double percentOutput) {
-            this.percentOutput = percentOutput;
+        private Speed(double rpm) {
+            this.rpm = rpm;
         }
 
-        public Voltage voltage() {
-            return Volts.of(percentOutput * 12.0);
+        public AngularVelocity angularVelocity() {
+            return RPM.of(rpm);
         }
     }
 
@@ -52,7 +51,7 @@ public class Intake extends SubsystemBase {
         HOMED(0),
         STOWED(0),
         INTAKE(-140),
-        AGITATE(-100);
+        AGITATE(-120);
 
         private final double degrees;
 
@@ -74,7 +73,7 @@ public class Intake extends SubsystemBase {
     
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
-    private final VoltageOut rollerVoltageRequest = new VoltageOut(0);
+    private final VelocityVoltage rollerVelocityRequest = new VelocityVoltage(0).withSlot(0);
 
     private boolean isHomed = true;
 
@@ -124,6 +123,11 @@ public class Intake extends SubsystemBase {
         config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
+        config.Slot0.kV = 0.106; 
+        config.Slot0.kP = 0.1; 
+        config.Slot0.kI = 0.0;
+        config.Slot0.kD = 0.0;
+
         rollerMotor.getConfigurator().apply(config);
     }
 
@@ -149,8 +153,8 @@ public class Intake extends SubsystemBase {
 
     public void set(Speed speed) {
         rollerMotor.setControl(
-            rollerVoltageRequest
-                .withOutput(speed.voltage())
+            rollerVelocityRequest
+                .withVelocity(speed.angularVelocity())
         );
     }
 
@@ -160,7 +164,10 @@ public class Intake extends SubsystemBase {
                 set(Position.INTAKE);
                 set(Speed.INTAKE);
             },
-            () -> set(Speed.STOP)
+            () -> {
+                set(Position.INTAKE);
+                set(Speed.STOP);
+            }
         );
     }
 
@@ -202,5 +209,6 @@ public class Intake extends SubsystemBase {
         builder.addDoubleProperty("RPM", () -> rollerMotor.getVelocity().getValue().in(RPM), null);
         builder.addDoubleProperty("Pivot Supply Current", () -> pivotMotor.getSupplyCurrent().getValue().in(Amps), null);
         builder.addDoubleProperty("Roller Supply Current", () -> rollerMotor.getSupplyCurrent().getValue().in(Amps), null);
+        builder.addDoubleProperty("Roller Stator Current", () -> rollerMotor.getStatorCurrent().getValue().in(Amps), null);
     }
 }
