@@ -97,15 +97,22 @@ public class Swerve extends CommandSwerveDrivetrain {
     }
 
     private void updateVision() {
-        double yaw = this.getState().Pose.getRotation().getDegrees();
+        Pose2d currentPose = this.getState().Pose;
+        double yaw = currentPose.getRotation().getDegrees();
+        
         LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, 0, 0, 0, 0, 0);
 
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
 
         if (mt2 != null && mt2.tagCount > 0) {
-            this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
-            this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+            double distanceError = mt2.pose.getTranslation().getDistance(currentPose.getTranslation());
+            
+            if (distanceError < 1.0) {
+                double xyStdDev = mt2.tagCount > 1 ? 0.3 : 0.7;
+                this.setVisionMeasurementStdDevs(VecBuilder.fill(xyStdDev, xyStdDev, 999999));
+                this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+            }
         }
     }
 

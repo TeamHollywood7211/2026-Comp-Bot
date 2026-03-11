@@ -1,15 +1,16 @@
-// src/main/java/frc/robot/commands/AutoRoutines.java
 package frc.robot.commands;
 
 import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
+import frc.robot.commands.autos.Money;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
 import frc.robot.subsystems.FrontRange;
@@ -51,11 +52,20 @@ public final class AutoRoutines {
     }
 
     private void registerNamedCommands() {
-        NamedCommands.registerCommand("Intake", intake.intakeCommand());
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         NamedCommands.registerCommand("ApproachStation", subsystemCommands.approachStationCommand());
-        NamedCommands.registerCommand("AimAndShoot", Commands.defer(() -> subsystemCommands.aimAndShoot(), Set.of(swerve, shooter, hood)));
-        NamedCommands.registerCommand("SpinUp", Commands.defer(() -> Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)), Set.of(shooter, hood)));
+        
+        NamedCommands.registerCommand("Intake 1", intake.intakeCommand());
+        NamedCommands.registerCommand("Intake 2", intake.intakeCommand());
+        NamedCommands.registerCommand("Intake 3", intake.intakeCommand());
+        NamedCommands.registerCommand("Intake 4", intake.intakeCommand());
+
+        NamedCommands.registerCommand("AimAndShoot 1", subsystemCommands.aimAndShoot());
+        NamedCommands.registerCommand("AimAndShoot 2", subsystemCommands.aimAndShoot());
+        NamedCommands.registerCommand("AimAndShoot 3", subsystemCommands.aimAndShoot());
+        NamedCommands.registerCommand("AimAndShoot 4", subsystemCommands.aimAndShoot());
+
+        NamedCommands.registerCommand("SpinUp", Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)));
 
         NamedCommands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
         NamedCommands.registerCommand("HangFinish", hanger.positionCommand(Hanger.Position.HUNG));
@@ -64,13 +74,8 @@ public final class AutoRoutines {
     }
 
     public void configure() {
+        autoChooser.addOption("Money (Java)", Money.create(subsystemCommands));
         SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        String[] commandNames = {
-            "Intake", "StowIntake", "ApproachStation", "AimAndShoot", "SpinUp", 
-            "HangReady", "HangFinish", "Play Cali Girls", "Stop Music"
-        };
-        SmartDashboard.putStringArray("Registered Named Commands", commandNames);
     }
 
     public SendableChooser<Command> getAutoChooser() {
