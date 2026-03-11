@@ -80,13 +80,7 @@ public class AimAndDriveCommand extends Command {
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
 
         Rotation2d fieldRelativeAngle = hubPosition.minus(robotPosition).getAngle();
-        return fieldRelativeAngle.minus(swerve.getOperatorForwardDirection());
-    }
-
-    private double getDistanceToHub() {
-        final Translation2d hubPosition = Landmarks.hubPosition();
-        final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
-        return robotPosition.getDistance(hubPosition);
+        return fieldRelativeAngle.minus(swerve.getOperatorForwardDirection()).plus(Rotation2d.fromDegrees(180));
     }
 
     @Override
@@ -99,8 +93,7 @@ public class AimAndDriveCommand extends Command {
                         .withTargetDirection(getDirectionToHub()));
 
         if (setShooterRpm != null) {
-            double distanceMeters = getDistanceToHub();
-            setShooterRpm.accept(distanceToRpmMap.get(distanceMeters));
+            setShooterRpm.accept(distanceToRpmMap.get(swerve.getDistanceToHub()));
         }
     }
 
