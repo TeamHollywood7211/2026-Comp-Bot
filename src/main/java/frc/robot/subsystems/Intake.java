@@ -118,13 +118,13 @@ public class Intake extends SubsystemBase {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        config.CurrentLimits.StatorCurrentLimit = 80.0;
+        config.CurrentLimits.StatorCurrentLimit = 150.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLimit = 60.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         config.Slot0.kV = 0.106; 
-        config.Slot0.kP = 0.1; 
+        config.Slot0.kP = 0.5; 
         config.Slot0.kI = 0.0;
         config.Slot0.kD = 0.0;
 
