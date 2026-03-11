@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 3.5,
-        "y": 2.0
+        "y": 6.05
       },
       "prevControl": null,
       "nextControl": {
         "x": 4.207106781186548,
-        "y": 2.707106781186548
+        "y": 5.342893218813452
       },
       "isLocked": false,
-      "linkedName": "Right Start"
+      "linkedName": "Left Start"
     },
     {
       "anchor": {
         "x": 8.25,
-        "y": 2.5
+        "y": 5.5
       },
       "prevControl": {
         "x": 7.25,
-        "y": 2.5
+        "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz 1"
+      "linkedName": "L-Blitz 1"
     }
   ],
   "rotationTargets": [],
