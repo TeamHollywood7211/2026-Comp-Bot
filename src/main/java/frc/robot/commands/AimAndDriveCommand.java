@@ -66,21 +66,20 @@ public class AimAndDriveCommand extends Command {
     }
 
     public boolean isAimed() {
+        // Pure field-centric comparison
         final Rotation2d targetHeading = fieldCentricFacingAngleRequest.TargetDirection;
-        final Rotation2d currentHeadingInBlueAlliancePerspective = swerve.getState().Pose.getRotation();
+        final Rotation2d currentHeading = swerve.getState().Pose.getRotation();
         
-        final Rotation2d currentHeadingInOperatorPerspective = currentHeadingInBlueAlliancePerspective
-                .minus(swerve.getOperatorForwardDirection());
-        
-        return GeometryUtil.isNear(targetHeading, currentHeadingInOperatorPerspective, kAimTolerance);
+        return GeometryUtil.isNear(targetHeading, currentHeading, kAimTolerance);
     }
 
     private Rotation2d getDirectionToHub() {
         final Translation2d hubPosition = Landmarks.hubPosition();
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
 
-        Rotation2d fieldRelativeAngle = hubPosition.minus(robotPosition).getAngle();
-        return fieldRelativeAngle.minus(swerve.getOperatorForwardDirection()).plus(Rotation2d.fromDegrees(180));
+        // Since the shooter and camera are on the front, point straight at it!
+        // No 180 flip needed.
+        return hubPosition.minus(robotPosition).getAngle();
     }
 
     @Override
