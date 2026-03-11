@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 8.25,
-        "y": 4.0
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
         "x": 7.350439220150706,
-        "y": 4.0
+        "y": 5.5
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "L-Blitz 1"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 6.05
       },
       "prevControl": {
-        "x": 4.207106781186547,
-        "y": 6.757106781186546
+        "x": 4.207106781186546,
+        "y": 5.342893218813453
       },
       "nextControl": null,
       "isLocked": false,

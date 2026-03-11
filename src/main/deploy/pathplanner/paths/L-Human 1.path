@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 2.5,
-        "y": 2.5
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.5,
-        "y": 1.5
+        "y": 4.5
       },
       "isLocked": false,
-      "linkedName": "Right Home"
+      "linkedName": "Left Home"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 0.65
       },
       "prevControl": {
-        "x": 0.6500000000000004,
-        "y": 1.65
+        "x": 1.1499999999999997,
+        "y": 1.5160254037844387
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 35.0
+    "rotation": -35.0
   },
   "useDefaultConstraints": true
 }

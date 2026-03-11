@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 2.5,
-        "y": 2.5
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2505881562988734,
-        "y": 4.562224010741229
+        "x": 1.1292827805730665,
+        "y": 5.5
       },
       "isLocked": false,
-      "linkedName": "Right Home"
+      "linkedName": "Left Home"
     },
     {
       "anchor": {
@@ -48,7 +48,7 @@
   "folder": "Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 35.0
+    "rotation": -35.0
   },
   "useDefaultConstraints": true
 }

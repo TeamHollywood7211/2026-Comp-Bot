@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6945729540969428,
-        "y": 7.0
+        "x": 2.0517974176505422,
+        "y": 5.448202582349458
       },
       "isLocked": false,
       "linkedName": "Depot 2"
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 2.5,
-        "y": 2.5
+        "y": 5.5
       },
       "prevControl": {
-        "x": 2.5,
-        "y": 4.616762369711623
+        "x": 1.0032229742164056,
+        "y": 6.996777025783595
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Home"
+      "linkedName": "Left Home"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 35.0
+    "rotation": -35.0
   },
   "reversed": false,
   "folder": "Left",
