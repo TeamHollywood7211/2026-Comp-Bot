@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/commands/AimAndDriveCommand.java
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
+
 import frc.robot.Constants.Driving;
 import frc.robot.Landmarks;
 import frc.robot.subsystems.Swerve;
@@ -66,20 +68,24 @@ public class AimAndDriveCommand extends Command {
     }
 
     public boolean isAimed() {
-        // Pure field-centric comparison
         final Rotation2d targetHeading = fieldCentricFacingAngleRequest.TargetDirection;
-        final Rotation2d currentHeading = swerve.getState().Pose.getRotation();
+        final Rotation2d currentHeadingInBlueAlliancePerspective = swerve.getState().Pose.getRotation();
         
-        return GeometryUtil.isNear(targetHeading, currentHeading, kAimTolerance);
+        final Rotation2d currentHeadingInOperatorPerspective = currentHeadingInBlueAlliancePerspective
+                .minus(swerve.getOperatorForwardDirection());
+        
+        return GeometryUtil.isNear(targetHeading, currentHeadingInOperatorPerspective, kAimTolerance);
     }
 
     private Rotation2d getDirectionToHub() {
         final Translation2d hubPosition = Landmarks.hubPosition();
         final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
 
-        // Since the shooter and camera are on the front, point straight at it!
-        // No 180 flip needed.
-        return hubPosition.minus(robotPosition).getAngle();
+        Rotation2d fieldRelativeAngle = hubPosition.minus(robotPosition).getAngle();
+        
+        return fieldRelativeAngle
+                .minus(swerve.getOperatorForwardDirection())
+                .plus(Rotation2d.fromDegrees(180));
     }
 
     @Override
