@@ -4,36 +4,31 @@
     {
       "anchor": {
         "x": 2.5,
-        "y": 4.0
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5,
-        "y": 3.75
+        "x": 3.250588156298873,
+        "y": 4.562224010741229
       },
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": "Right Home"
     },
     {
       "anchor": {
-        "x": 1.0,
-        "y": 3.75
+        "x": 0.5,
+        "y": 5.0
       },
       "prevControl": {
-        "x": 2.499574883372217,
-        "y": 3.75
+        "x": 2.6167623697116222,
+        "y": 5.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot 1"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -46,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.1,
-    "rotation": 180.0
+    "velocity": 0,
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right",
   "idealStartingState": {
-    "velocity": 0.1,
-    "rotation": 0.0
+    "velocity": 0,
+    "rotation": 35.0
   },
   "useDefaultConstraints": true
 }
