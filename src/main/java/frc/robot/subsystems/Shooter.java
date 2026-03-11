@@ -52,9 +52,9 @@ public class Shooter extends SubsystemBase {
         config.MotorOutput.Inverted = invertDirection;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.Voltage.PeakReverseVoltage = -12.0; 
-        config.CurrentLimits.StatorCurrentLimit = 120.0;
+        config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 70.0;
+        config.CurrentLimits.SupplyCurrentLimit = 45.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.Slot0.kP = 0.5;
         config.Slot0.kI = 2.0;
