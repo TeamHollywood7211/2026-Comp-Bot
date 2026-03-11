@@ -4,6 +4,7 @@
   "holonomicMode": true,
   "pathFolders": [
     "Center",
+    "Left",
     "Right"
   ],
   "autoFolders": [],

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 2.0
+        "x": 2.5,
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.207106781186548,
-        "y": 2.707106781186548
+        "x": 3.2505881562988734,
+        "y": 4.562224010741229
       },
       "isLocked": false,
-      "linkedName": "Right Start"
+      "linkedName": "Right Home"
     },
     {
       "anchor": {
-        "x": 8.25,
-        "y": 2.5
+        "x": 0.5,
+        "y": 5.0
       },
       "prevControl": {
-        "x": 7.25,
-        "y": 2.5
+        "x": 2.6167623697116222,
+        "y": 5.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz 1"
+      "linkedName": "Depot 1"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Right",
+  "folder": "Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 35.0
   },
   "useDefaultConstraints": true
 }
