@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5,
-        "y": 0.65
+        "x": 8.25,
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.491544444444445,
-        "y": 3.9765333333333337
+        "x": 7.350439220150706,
+        "y": 2.5
       },
       "isLocked": false,
-      "linkedName": "Human Player"
+      "linkedName": "Blitz 1"
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.0
+        "x": 3.5,
+        "y": 2.0
       },
       "prevControl": {
-        "x": 0.5036777777777786,
-        "y": 0.6049555555555544
+        "x": 4.207106781186547,
+        "y": 2.707106781186547
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": "Right Start"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
