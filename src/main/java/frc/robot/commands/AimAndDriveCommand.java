@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.Constants.Driving;
 import frc.robot.Landmarks;
 import frc.robot.subsystems.Swerve;
@@ -33,12 +32,12 @@ public class AimAndDriveCommand extends Command {
     
     private final InterpolatingDoubleTreeMap distanceToRpmMap = new InterpolatingDoubleTreeMap();
 
-   private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
+    private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
             .withRotationalDeadband(Driving.kPIDRotationDeadband)
             .withMaxAbsRotationalRate(Driving.kMaxRotationalRate)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
-            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance) 
+            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
             .withHeadingPID(10, 0, 0.1);
 
     public AimAndDriveCommand(
@@ -69,23 +68,21 @@ public class AimAndDriveCommand extends Command {
 
     public boolean isAimed() {
         final Rotation2d targetHeading = fieldCentricFacingAngleRequest.TargetDirection;
-        final Rotation2d currentHeadingInBlueAlliancePerspective = swerve.getState().Pose.getRotation();
-        
-        final Rotation2d currentHeadingInOperatorPerspective = currentHeadingInBlueAlliancePerspective
-                .minus(swerve.getOperatorForwardDirection());
-        
-        return GeometryUtil.isNear(targetHeading, currentHeadingInOperatorPerspective, kAimTolerance);
+        final Rotation2d currentHeading = swerve.getState().Pose.getRotation();
+        return GeometryUtil.isNear(targetHeading, currentHeading, kAimTolerance);
     }
 
     private Rotation2d getDirectionToHub() {
-        final Translation2d hubPosition = Landmarks.hubPosition();
-        final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
+        try {
+            final Translation2d hubPosition = Landmarks.hubPosition();
+            final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
 
-        Rotation2d fieldRelativeAngle = hubPosition.minus(robotPosition).getAngle();
-        
-        return fieldRelativeAngle
-                .minus(swerve.getOperatorForwardDirection())
-                .plus(Rotation2d.fromDegrees(180));
+            // Calculate absolute field angle, then flip 180 to accommodate hardware offset
+            return hubPosition.minus(robotPosition).getAngle().plus(Rotation2d.fromDegrees(180));
+        } catch (Exception e) {
+            // Safety fallback if Landmarks crashes (explained below)
+            return swerve.getState().Pose.getRotation();
+        }
     }
 
     @Override
