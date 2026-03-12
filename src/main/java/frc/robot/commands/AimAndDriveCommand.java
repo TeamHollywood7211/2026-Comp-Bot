@@ -33,12 +33,12 @@ public class AimAndDriveCommand extends Command {
     
     private final InterpolatingDoubleTreeMap distanceToRpmMap = new InterpolatingDoubleTreeMap();
 
-    private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
+   private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
             .withRotationalDeadband(Driving.kPIDRotationDeadband)
             .withMaxAbsRotationalRate(Driving.kMaxRotationalRate)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
-            .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
+            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance) 
             .withHeadingPID(10, 0, 0.1);
 
     public AimAndDriveCommand(

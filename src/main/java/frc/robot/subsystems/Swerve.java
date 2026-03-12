@@ -88,23 +88,24 @@ public class Swerve extends CommandSwerveDrivetrain {
         return robotPosition.getDistance(hubPosition);
     }
 
-    @Override
+@Override
     public void periodic() {
-        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+        // Remove the DriverStation.isDisabled() check so it locks in the perspective once
+        if (!m_hasAppliedOperatorPerspective) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 this.setOperatorPerspectiveForward(
                         allianceColor == Alliance.Red
                                 ? kRedAlliancePerspectiveRotation
                                 : kBlueAlliancePerspectiveRotation);
-                if (!m_hasAppliedOperatorPerspective) {
+                
+                if (!DriverStation.isAutonomous()) {
                     seedFieldCentric();
                 }
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        updateVision();
         
-        // Continuously publish the distance to the dashboard
+        updateVision();
         SmartDashboard.putNumber("Shooter/Distance To Hub", getDistanceToHub());
     }
 
