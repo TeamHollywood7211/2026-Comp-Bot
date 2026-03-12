@@ -1,4 +1,3 @@
-// src/main/java/frc/robot/commands/AimAndDriveCommand.java
 package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.Degrees;
@@ -37,7 +36,7 @@ public class AimAndDriveCommand extends Command {
             .withMaxAbsRotationalRate(Driving.kMaxRotationalRate)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withSteerRequestType(SteerRequestType.MotionMagicExpo)
-            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance)
+            .withForwardPerspective(ForwardPerspectiveValue.OperatorPerspective)
             .withHeadingPID(10, 0, 0.1);
 
     public AimAndDriveCommand(
@@ -76,11 +75,9 @@ public class AimAndDriveCommand extends Command {
         try {
             final Translation2d hubPosition = Landmarks.hubPosition();
             final Translation2d robotPosition = swerve.getState().Pose.getTranslation();
-
-            // Calculate absolute field angle, then flip 180 to accommodate hardware offset
-            return hubPosition.minus(robotPosition).getAngle().plus(Rotation2d.fromDegrees(180));
+            
+            return hubPosition.minus(robotPosition).getAngle();
         } catch (Exception e) {
-            // Safety fallback if Landmarks crashes (explained below)
             return swerve.getState().Pose.getRotation();
         }
     }
