@@ -88,9 +88,8 @@ public class Swerve extends CommandSwerveDrivetrain {
         return robotPosition.getDistance(hubPosition);
     }
 
-@Override
+    @Override
     public void periodic() {
-        // Remove the DriverStation.isDisabled() check so it locks in the perspective once
         if (!m_hasAppliedOperatorPerspective) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 this.setOperatorPerspectiveForward(
@@ -112,20 +111,23 @@ public class Swerve extends CommandSwerveDrivetrain {
     private void updateVision() {
         Pose2d currentPose = this.getState().Pose;
         double yaw = currentPose.getRotation().getDegrees();
+        double yawRate = Math.toDegrees(this.getState().Speeds.omegaRadiansPerSecond);
         
-        LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, 0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, yawRate, 0, 0, 0, 0);
 
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
 
         if (mt2 != null && mt2.tagCount > 0) {
-            double distanceError = mt2.pose.getTranslation().getDistance(currentPose.getTranslation());
+            // Reject vision only if the robot is spinning violently (causes blurry images)
+            if (Math.abs(yawRate) > 720) return;
+
+            // Dynamically scale trust based on tag count and distance instead of a hard distance cutoff
+            double avgDist = mt2.avgTagDist;
+            double xyStdDev = (mt2.tagCount > 1) ? 0.3 : (0.5 + (avgDist * 0.1));
             
-            if (distanceError < 1.0) {
-                double xyStdDev = mt2.tagCount > 1 ? 0.3 : 0.7;
-                this.setVisionMeasurementStdDevs(VecBuilder.fill(xyStdDev, xyStdDev, 999999));
-                this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
-            }
+            this.setVisionMeasurementStdDevs(VecBuilder.fill(xyStdDev, xyStdDev, 999999));
+            this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
         }
     }
 
