@@ -14,13 +14,16 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import frc.robot.Landmarks;
 import frc.robot.LimelightHelpers;
 import frc.robot.Ports;
 import frc.robot.generated.TunerConstants;
@@ -79,33 +82,50 @@ public class Swerve extends CommandSwerveDrivetrain {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    @Override
+    public double getDistanceToHub() {
+        final Translation2d hubPosition = Landmarks.hubPosition();
+        final Translation2d robotPosition = this.getState().Pose.getTranslation();
+        return robotPosition.getDistance(hubPosition);
+    }
+
+@Override
     public void periodic() {
-        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+        // Remove the DriverStation.isDisabled() check so it locks in the perspective once
+        if (!m_hasAppliedOperatorPerspective) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 this.setOperatorPerspectiveForward(
                         allianceColor == Alliance.Red
                                 ? kRedAlliancePerspectiveRotation
                                 : kBlueAlliancePerspectiveRotation);
-                if (!m_hasAppliedOperatorPerspective) {
+                
+                if (!DriverStation.isAutonomous()) {
                     seedFieldCentric();
                 }
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+        
         updateVision();
+        SmartDashboard.putNumber("Shooter/Distance To Hub", getDistanceToHub());
     }
 
     private void updateVision() {
-        double yaw = this.getState().Pose.getRotation().getDegrees();
+        Pose2d currentPose = this.getState().Pose;
+        double yaw = currentPose.getRotation().getDegrees();
+        
         LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, 0, 0, 0, 0, 0);
 
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
 
         if (mt2 != null && mt2.tagCount > 0) {
-            this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
-            this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+            double distanceError = mt2.pose.getTranslation().getDistance(currentPose.getTranslation());
+            
+            if (distanceError < 1.0) {
+                double xyStdDev = mt2.tagCount > 1 ? 0.3 : 0.7;
+                this.setVisionMeasurementStdDevs(VecBuilder.fill(xyStdDev, xyStdDev, 999999));
+                this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+            }
         }
     }
 

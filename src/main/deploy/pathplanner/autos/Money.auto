@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "8 ball Shot"
+            "pathName": "Starting to Right Side Shot"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AimAndShoot"
+                  "name": "AimAndShoot 1"
                 }
               }
             ]
@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Outpost to Right Side Shot"
+            "pathName": "Right Side Shot to Outpost"
           }
         },
         {
@@ -44,13 +44,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 5.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Human to Shot"
+            "pathName": "Outpost to Right Side Shot"
           }
         },
         {
@@ -66,7 +66,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AimAndShoot"
+                  "name": "AimAndShoot 2"
                 }
               }
             ]

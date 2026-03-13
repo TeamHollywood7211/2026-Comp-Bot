@@ -4,41 +4,34 @@
     {
       "anchor": {
         "x": 0.5,
-        "y": 0.65
+        "y": 5.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.491544444444445,
-        "y": 3.9765333333333337
+        "x": 0.5000000000000001,
+        "y": 7.194572954096943
       },
       "isLocked": false,
-      "linkedName": "Human Player"
+      "linkedName": "Depot 1"
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.0
+        "x": 0.5,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 0.5036777777777786,
-        "y": 0.6049555555555544
+        "x": 0.49999999999999967,
+        "y": 4.883237630288377
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": "Depot 2"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "AimAndShoot 3s",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

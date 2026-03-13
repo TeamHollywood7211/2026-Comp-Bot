@@ -10,11 +10,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
+import frc.robot.commands.autos.Money;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
+import frc.robot.subsystems.FrontRange;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Music;
 import frc.robot.subsystems.Shooter;
@@ -33,7 +36,7 @@ public final class AutoRoutines {
 
     public AutoRoutines(
             Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-            Shooter shooter, Hood hood, Hanger hanger, Limelight limelight, Music music) {
+            Shooter shooter, Hood hood, Hanger hanger, Limelight limelight, Music music, Leds leds, FrontRange frontRange) {
         
         this.swerve = swerve;
         this.intake = intake;
@@ -42,22 +45,27 @@ public final class AutoRoutines {
         this.hanger = hanger;
         this.music = music;
 
-        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger, music);
+        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange);
 
         registerNamedCommands();
         this.autoChooser = AutoBuilder.buildAutoChooser();
     }
 
     private void registerNamedCommands() {
-        NamedCommands.registerCommand("Intake", intake.intakeCommand());
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
+        NamedCommands.registerCommand("ApproachStation", subsystemCommands.approachStationCommand());
         
-        NamedCommands.registerCommand("AimAndShoot 1s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(1.0), Set.of(swerve, shooter, hood)));
-        NamedCommands.registerCommand("AimAndShoot 2s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(2.0), Set.of(swerve, shooter, hood)));
-        NamedCommands.registerCommand("AimAndShoot 3s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(3.0), Set.of(swerve, shooter, hood)));
-        NamedCommands.registerCommand("AimAndShoot 7s", Commands.defer(() -> subsystemCommands.autoAimAndShoot(7.0), Set.of(swerve, shooter, hood)));
-        
-        NamedCommands.registerCommand("SpinUp", Commands.defer(() -> Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)), Set.of(shooter, hood)));
+        NamedCommands.registerCommand("Intake 1", intake.intakeCommand());
+        NamedCommands.registerCommand("Intake 2", intake.intakeCommand());
+        NamedCommands.registerCommand("Intake 3", intake.intakeCommand());
+        NamedCommands.registerCommand("Intake 4", intake.intakeCommand());
+
+        NamedCommands.registerCommand("AimAndShoot 1", subsystemCommands.aimAndShoot());
+        NamedCommands.registerCommand("AimAndShoot 2", subsystemCommands.aimAndShoot());
+        NamedCommands.registerCommand("AimAndShoot 3", subsystemCommands.aimAndShoot());
+        NamedCommands.registerCommand("AimAndShoot 4", subsystemCommands.aimAndShoot());
+
+        NamedCommands.registerCommand("SpinUp", Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)));
 
         NamedCommands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
         NamedCommands.registerCommand("HangFinish", hanger.positionCommand(Hanger.Position.HUNG));
@@ -66,13 +74,8 @@ public final class AutoRoutines {
     }
 
     public void configure() {
+        autoChooser.addOption("Money (Java)", Money.create(subsystemCommands));
         SmartDashboard.putData("Auto Chooser", autoChooser);
-
-        String[] commandNames = {
-            "Intake", "StowIntake", "AimAndShoot 1s", "AimAndShoot 2s", "AimAndShoot 3s", "AimAndShoot 7s", "SpinUp", 
-            "HangReady", "HangFinish", "Play Cali Girls", "Stop Music"
-        };
-        SmartDashboard.putStringArray("Registered Named Commands", commandNames);
     }
 
     public SendableChooser<Command> getAutoChooser() {

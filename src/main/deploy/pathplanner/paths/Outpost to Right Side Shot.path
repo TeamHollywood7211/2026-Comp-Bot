@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.65,
-        "y": 0.65
+        "x": 0.6232524964336661,
+        "y": 0.6515406562054205
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.8347084417886377,
-        "y": 0.8184719309915259
+        "x": 0.8453575449464349,
+        "y": 0.7662984333934638
       },
       "isLocked": false,
-      "linkedName": "HUMAN"
+      "linkedName": "Outpost"
     },
     {
       "anchor": {
-        "x": 2.758131241084165,
-        "y": 2.644094151212554
+        "x": 3.029843081312411,
+        "y": 2.8122967189728967
       },
       "prevControl": {
-        "x": 1.0629008521117091,
-        "y": 1.820192173313334
+        "x": 1.4688767103675338,
+        "y": 1.9770218362004348
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SHOT"
+      "linkedName": "Right Side Shot"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 39.03551289874684
+    "rotation": 45.0
   },
   "reversed": false,
   "folder": null,

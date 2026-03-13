@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/subsystems/Intake.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -27,13 +28,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants.KrakenX60;
 import frc.robot.Ports;
 
 public class Intake extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        INTAKE(0.58);
+        INTAKE(0.65);
 
         private final double percentOutput;
 
@@ -47,10 +49,10 @@ public class Intake extends SubsystemBase {
     }
 
     public enum Position {
-        HOMED(110),
-        STOWED(100),
-        INTAKE(-45),
-        AGITATE(20);
+        HOMED(0),
+        STOWED(0),
+        INTAKE(-140),
+        AGITATE(-100);
 
         private final double degrees;
 
@@ -90,9 +92,9 @@ public class Intake extends SubsystemBase {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
-        config.CurrentLimits.StatorCurrentLimit = 120.0;
+        config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 70.0;
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -117,9 +119,9 @@ public class Intake extends SubsystemBase {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        config.CurrentLimits.StatorCurrentLimit = 80.0;
+        config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLimit = 30.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         rollerMotor.getConfigurator().apply(config);

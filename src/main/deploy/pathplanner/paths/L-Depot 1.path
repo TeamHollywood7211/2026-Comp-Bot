@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.65,
-        "y": 0.65
+        "x": 2.5,
+        "y": 5.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.8347084417886377,
-        "y": 0.8184719309915259
+        "x": 1.1292827805730665,
+        "y": 5.5
       },
       "isLocked": false,
-      "linkedName": "HUMAN"
+      "linkedName": "Left Home"
     },
     {
       "anchor": {
-        "x": 2.758131241084165,
-        "y": 2.644094151212554
+        "x": 0.5,
+        "y": 5.0
       },
       "prevControl": {
-        "x": 1.0629008521117091,
-        "y": 1.820192173313334
+        "x": 2.6167623697116222,
+        "y": 5.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SHOT"
+      "linkedName": "Depot 1"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 39.03551289874684
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Left",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -35.0
   },
   "useDefaultConstraints": true
 }

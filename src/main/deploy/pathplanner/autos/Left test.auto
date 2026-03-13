@@ -5,9 +5,27 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Intake 1"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "start to shoot"
+            "pathName": "L-Blitz 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L-Blitz 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L-Start to Home"
           }
         },
         {
@@ -17,13 +35,13 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 8.0
+                  "waitTime": 7.0
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AimAndShoot"
+                  "name": "AimAndShoot 1"
                 }
               }
             ]

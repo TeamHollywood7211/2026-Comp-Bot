@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start to center home"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Home To Climb"
+            "pathName": "h"
           }
         }
       ]

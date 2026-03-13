@@ -3,48 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 4.0
+        "x": 0.8173012048192771,
+        "y": 5.958277108433736
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.427989545234114,
-        "y": 4.0
+        "x": 1.6259518072289159,
+        "y": 5.564879518072289
       },
       "isLocked": false,
-      "linkedName": "Center Goal Start"
+      "linkedName": "pick up depo"
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.0
+        "x": 2.7187228915662653,
+        "y": 4.87643373493976
       },
       "prevControl": {
-        "x": 3.0007751652446757,
-        "y": 4.0
+        "x": 2.0302771084337348,
+        "y": 5.4993132530120485
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": "shoot from depo"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "SpinUp",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "AimAndShoot",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -55,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -27.897271030947806
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -178.2986453946739
   },
   "useDefaultConstraints": true
 }
