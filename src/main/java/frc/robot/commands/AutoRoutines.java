@@ -77,8 +77,6 @@ public final class AutoRoutines {
         }).andThen(new InstantCommand(() -> {
             feeder.set(Feeder.Speed.FEED);
             floor.set(Floor.Speed.FEED);
-        })).andThen(new InstantCommand(() -> {
-            intake.agitateCommand();
         })));
 
         NamedCommands.registerCommand("ShootStop", new InstantCommand(() -> {

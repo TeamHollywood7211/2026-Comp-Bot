@@ -124,7 +124,7 @@ public class RobotContainer {
 
         operator.leftTrigger().whileTrue(
             Commands.parallel(
-                shooter.runShooterCommand(() -> manualRPM + 500),
+                shooter.runShooterCommand(() -> manualRPM),
                 Commands.run(() -> hood.setPosition(manualHoodPos), hood).finallyDo(hood::stop)
             ).alongWith(
                 Commands.sequence(
