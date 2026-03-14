@@ -35,7 +35,7 @@ import frc.robot.Ports;
 public class Intake extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        INTAKE(0.65);
+        INTAKE(0.90);
 
         private final double percentOutput;
 
