@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.4826961483594863,
-        "y": 1.7125106990014274
+        "x": 3.3403708987161194,
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.443880171184022,
-        "y": 1.9712838801711858
+        "x": 3.2100479202444046,
+        "y": 5.7866553931259075
       },
       "isLocked": false,
       "linkedName": null
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 2.5381740370898713,
-        "y": 2.5535235378031382
+        "y": 4.973052781740371
       },
       "prevControl": {
-        "x": 2.746186610674333,
-        "y": 2.414848488746832
+        "x": 3.0039657631954353,
+        "y": 5.2059486447931524
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "shoot"
+      "linkedName": "depo Shoot 8"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 37.647620640107725
+    "rotation": -24.77514056883198
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 1.0609116902640847
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

@@ -104,9 +104,9 @@ public class Shooter extends SubsystemBase {
         return run(() -> setRPM(rpm));
     }
 
-    public Command runShooterCommand(double rpm) {
-        return runEnd(() -> setRPM(rpm), this::stop);
-    }
+    // public Command runShooterCommand(double rpm) {
+    //     return runEnd(() -> setRPM(rpm), this::stop);
+    // }
 
     public Command runShooterCommand(DoubleSupplier rpmSupplier) {
         return runEnd(() -> setRPM(rpmSupplier.getAsDouble()), this::stop);

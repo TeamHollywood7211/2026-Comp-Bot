@@ -52,7 +52,7 @@ public class RobotContainer {
 
     private final AutoRoutines autoRoutines;
 
-    private double manualRPM = 3000.0;
+    private double manualRPM = 3500.0;
     private double manualHoodPos = 0.2; 
     private SpeedMode currentSpeedMode = SpeedMode.FAST;
 
@@ -166,6 +166,23 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoRoutines.getSelectedAuto();
+        return autoRoutines.getSelectedAuto().andThen(Commands.parallel(
+                shooter.runShooterCommand(() -> manualRPM),
+                Commands.run(() -> hood.setPosition(manualHoodPos), hood).finallyDo(hood::stop)
+            ).alongWith(
+                Commands.sequence(
+                    Commands.waitUntil(() -> shooter.isAtVelocity(manualRPM) && hood.isPositionWithinTolerance()),
+                    Commands.parallel(
+                        feeder.feedCommand(),
+                        floor.runEnd(() -> floor.set(Floor.Speed.FEED), () -> floor.set(Floor.Speed.STOP)),
+                        intake.agitateCommand()
+                    )
+                )
+            ).alongWith(
+                Commands.startEnd(
+                    () -> { if(shooter.isAtVelocity(manualRPM)) operator.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1.0); },
+                    () -> operator.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 0)
+                )
+            ));
     }
 }

@@ -9,14 +9,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
-import frc.robot.commands.autos.Money;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+// import frc.robot.commands.autos.Money;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
 import frc.robot.subsystems.FrontRange;
 import frc.robot.subsystems.Hanger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.Position;
+import frc.robot.subsystems.Intake.Speed;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Music;
@@ -25,7 +29,9 @@ import frc.robot.subsystems.Swerve;
 
 public final class AutoRoutines {
     private final Swerve swerve;
-    private final Intake intake;
+    private final Intake intake;   
+    private final Floor floor;
+    private final Feeder feeder;
     private final Shooter shooter;
     private final Hood hood;
     private final Hanger hanger;
@@ -40,6 +46,8 @@ public final class AutoRoutines {
         
         this.swerve = swerve;
         this.intake = intake;
+        this.floor = floor;
+        this.feeder = feeder;
         this.shooter = shooter;
         this.hood = hood;
         this.hanger = hanger;
@@ -51,19 +59,34 @@ public final class AutoRoutines {
         this.autoChooser = AutoBuilder.buildAutoChooser();
     }
 
-    private void registerNamedCommands() {
+    public void registerNamedCommands() {
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         NamedCommands.registerCommand("ApproachStation", subsystemCommands.approachStationCommand());
         
-        NamedCommands.registerCommand("Intake 1", intake.intakeCommand());
-        NamedCommands.registerCommand("Intake 2", intake.intakeCommand());
-        NamedCommands.registerCommand("Intake 3", intake.intakeCommand());
-        NamedCommands.registerCommand("Intake 4", intake.intakeCommand());
+        NamedCommands.registerCommand("Intake", new InstantCommand(() -> {
+            intake.set(Intake.Position.INTAKE);
+            intake.set(Intake.Speed.INTAKE);
+        }));
 
-        NamedCommands.registerCommand("AimAndShoot 1", subsystemCommands.aimAndShoot());
-        NamedCommands.registerCommand("AimAndShoot 2", subsystemCommands.aimAndShoot());
-        NamedCommands.registerCommand("AimAndShoot 3", subsystemCommands.aimAndShoot());
-        NamedCommands.registerCommand("AimAndShoot 4", subsystemCommands.aimAndShoot());
+        NamedCommands.registerCommand("IntakeStop", new InstantCommand(() -> {
+            intake.set(Intake.Speed.STOP);
+        }));
+
+        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> {
+            shooter.setRPM(3500);
+        }).andThen(new InstantCommand(() -> {
+            feeder.set(Feeder.Speed.FEED);
+            floor.set(Floor.Speed.FEED);
+        })).andThen(new InstantCommand(() -> {
+            intake.agitateCommand();
+        })));
+
+        NamedCommands.registerCommand("ShootStop", new InstantCommand(() -> {
+            shooter.stop();
+        }).andThen(new InstantCommand(() -> {
+            feeder.stop();
+            floor.stop();
+        })));
 
         NamedCommands.registerCommand("SpinUp", Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)));
 
@@ -74,7 +97,7 @@ public final class AutoRoutines {
     }
 
     public void configure() {
-        autoChooser.addOption("Money (Java)", Money.create(subsystemCommands));
+        // autoChooser.addOption("Money (Java)", Money.create(subsystemCommands));
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 

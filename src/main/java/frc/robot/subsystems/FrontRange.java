@@ -21,7 +21,7 @@ public class FrontRange extends SubsystemBase {
     private final CANrange canrange;
 
     public FrontRange() {
-        canrange = new CANrange(Ports.kFrontRange, Ports.kCANivoreCANBus);
+        canrange = new CANrange(Ports.kFrontRange, Ports.kRoboRioCANBus);
         SmartDashboard.putData(this);
     }
 

@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.KrakenX60;
@@ -35,7 +36,7 @@ import frc.robot.Ports;
 public class Intake extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        INTAKE(0.65);
+        INTAKE(0.58);
 
         private final double percentOutput;
 
@@ -51,7 +52,7 @@ public class Intake extends SubsystemBase {
     public enum Position {
         HOMED(0),
         STOWED(0),
-        INTAKE(-140),
+        INTAKE(-145),
         AGITATE(-100);
 
         private final double degrees;
@@ -121,7 +122,7 @@ public class Intake extends SubsystemBase {
 
         config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 30.0;
+        config.CurrentLimits.SupplyCurrentLimit = 60.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         rollerMotor.getConfigurator().apply(config);
@@ -157,10 +158,14 @@ public class Intake extends SubsystemBase {
     public Command intakeCommand() {
         return startEnd(
             () -> {
+                System.out.println("Hi Hollywood");
                 set(Position.INTAKE);
                 set(Speed.INTAKE);
             },
-            () -> set(Speed.STOP)
+            () -> {
+                System.out.println("Bye Hollywood");
+                set(Speed.STOP);
+            }
         );
     }
 

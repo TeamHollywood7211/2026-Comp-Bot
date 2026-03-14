@@ -24,7 +24,7 @@ public class Leds extends SubsystemBase {
     private final int flairOffset = 150;
 
     public Leds() {
-        candle = new CANdle(Ports.kCANdle, Ports.kCANivoreCANBus);
+        candle = new CANdle(Ports.kCANdle, Ports.kRoboRioCANBus);
         
         CANdleConfiguration config = new CANdleConfiguration();
         candle.getConfigurator().apply(config);
