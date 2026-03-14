@@ -53,7 +53,7 @@ public class Intake extends SubsystemBase {
         HOMED(0),
         STOWED(0),
         INTAKE(-140),
-        AGITATE(-100);
+        AGITATE(-120);
 
         private final double degrees;
 
@@ -72,7 +72,8 @@ public class Intake extends SubsystemBase {
 
     private final TalonFX pivotMotor;
     private final TalonFXS rollerMotor; 
-    
+    private final TalonFXS rollerMotor2; 
+
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0);
@@ -81,9 +82,10 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         pivotMotor = new TalonFX(Ports.kIntakePivot, Ports.kCANivoreCANBus);
-        rollerMotor = new TalonFXS(Ports.kIntakeRollers, Ports.kCANivoreCANBus); 
+        rollerMotor = new TalonFXS(Ports.kIntakeRollers, Ports.kCANivoreCANBus);
+        rollerMotor2 = new TalonFXS(Ports.kInatkeRollers2, Ports.kCANivoreCANBus); 
         configurePivotMotor();
-        configureRollerMotor();
+        configureRollerMotors();
         SmartDashboard.putData(this);
     }
 
@@ -112,7 +114,7 @@ public class Intake extends SubsystemBase {
         pivotMotor.getConfigurator().apply(config);
     }
 
-    private void configureRollerMotor() {
+    private void configureRollerMotors() {
         final TalonFXSConfiguration config = new TalonFXSConfiguration();
 
         config.Commutation.MotorArrangement = MotorArrangementValue.VORTEX_JST;
@@ -126,6 +128,7 @@ public class Intake extends SubsystemBase {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         rollerMotor.getConfigurator().apply(config);
+        rollerMotor2.getConfigurator().apply(config);
     }
 
     private boolean isPositionWithinTolerance() {
@@ -150,6 +153,10 @@ public class Intake extends SubsystemBase {
 
     public void set(Speed speed) {
         rollerMotor.setControl(
+            rollerVoltageRequest
+                .withOutput(speed.voltage())
+        );
+        rollerMotor2.setControl(
             rollerVoltageRequest
                 .withOutput(speed.voltage())
         );

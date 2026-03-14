@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.3403708987161194,
+        "x": 8.3,
         "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2100479202444046,
-        "y": 5.7866553931259075
+        "x": 7.300000000000001,
+        "y": 6.0
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "L-Blitz 1"
     },
     {
       "anchor": {
-        "x": 2.5381740370898713,
-        "y": 4.973052781740371
+        "x": 2.5,
+        "y": 5.5
       },
       "prevControl": {
-        "x": 3.0039657631954353,
-        "y": 5.2059486447931524
+        "x": 3.706282779215024,
+        "y": 5.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "depo Shoot 8"
+      "linkedName": "L-Home"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -24.77514056883198
+    "rotation": -35.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Left",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

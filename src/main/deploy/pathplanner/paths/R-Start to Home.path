@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 2.5
+        "x": 2.6,
+        "y": 2.6
       },
       "prevControl": {
-        "x": 3.5,
-        "y": 2.5
+        "x": 3.6,
+        "y": 2.6
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R-Home"
     }
   ],
   "rotationTargets": [],

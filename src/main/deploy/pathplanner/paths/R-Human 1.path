@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7397004279600568,
-        "y": 5.930513552068473
+        "x": 2.6,
+        "y": 2.6
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7489158345221112,
-        "y": 5.697617689015692
+        "x": 2.6,
+        "y": 1.6
       },
       "isLocked": false,
-      "linkedName": "depo intake"
+      "linkedName": "R-Home"
     },
     {
       "anchor": {
-        "x": 2.5381740370898713,
-        "y": 4.973052781740371
+        "x": 0.7,
+        "y": 0.68
       },
       "prevControl": {
-        "x": 1.9947503566333817,
-        "y": 5.516476462196861
+        "x": 1.6999999999999997,
+        "y": 0.6799999999999999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "depo Shoot 8"
+      "linkedName": "Human"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -24.77514056883198
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 178.4088597288053
+    "rotation": 35.0
   },
   "useDefaultConstraints": true
 }

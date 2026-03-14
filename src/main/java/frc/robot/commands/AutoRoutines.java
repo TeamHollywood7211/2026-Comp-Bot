@@ -73,13 +73,15 @@ public final class AutoRoutines {
         }));
 
         NamedCommands.registerCommand("Shoot", new InstantCommand(() -> {
-            shooter.setRPM(3500);
-        }).andThen(new InstantCommand(() -> {
+            shooter.setRPM(3100);
+        }));
+
+        NamedCommands.registerCommand("Feed", new InstantCommand(() -> {
             feeder.set(Feeder.Speed.FEED);
             floor.set(Floor.Speed.FEED);
-        })));
+        }));
 
-        NamedCommands.registerCommand("ShootStop", new InstantCommand(() -> {
+        NamedCommands.registerCommand("StopAll", new InstantCommand(() -> {
             shooter.stop();
         }).andThen(new InstantCommand(() -> {
             feeder.stop();

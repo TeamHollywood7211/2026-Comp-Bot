@@ -5,6 +5,7 @@
   "pathFolders": [
     "Center",
     "Left",
+    "Shared",
     "Right"
   ],
   "autoFolders": [],
