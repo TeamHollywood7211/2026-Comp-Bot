@@ -5,30 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L-Blitz 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeStop"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L-Blitz 2"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "L-Depot 1"

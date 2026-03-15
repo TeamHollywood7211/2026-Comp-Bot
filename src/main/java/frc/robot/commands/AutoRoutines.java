@@ -82,7 +82,7 @@ public final class AutoRoutines {
         }));
 
         NamedCommands.registerCommand("StopAll", new InstantCommand(() -> {
-            shooter.stop();
+            shooter.setRPM(0);
         }).andThen(new InstantCommand(() -> {
             feeder.stop();
             floor.stop();

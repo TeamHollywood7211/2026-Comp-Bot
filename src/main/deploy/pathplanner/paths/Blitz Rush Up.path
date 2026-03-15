@@ -4,28 +4,28 @@
     {
       "anchor": {
         "x": 8.3,
-        "y": 6.1
+        "y": 1.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.300000000000001,
-        "y": 6.1
+        "x": 8.3,
+        "y": 2.0
       },
       "isLocked": false,
-      "linkedName": "L-Blitz 1"
+      "linkedName": "Blitz Bottom 2"
     },
     {
       "anchor": {
-        "x": 3.0,
-        "y": 5.2
+        "x": 8.3,
+        "y": 7.0
       },
       "prevControl": {
-        "x": 3.643133333333334,
-        "y": 5.804155555555557
+        "x": 8.3,
+        "y": 6.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "L-Home"
+      "linkedName": "Blitz Top 2"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Left",
+  "folder": "Shared",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
