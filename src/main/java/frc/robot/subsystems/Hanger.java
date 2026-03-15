@@ -37,8 +37,8 @@ public class Hanger extends SubsystemBase {
     public enum Position {
         HOMED(0),
         EXTEND_HOPPER(2),
-        HANGING(5.5),
-        HUNG(0.1);
+        HANGING(4),
+        HUNG(0.0);
 
         private final double inches;
 
@@ -48,7 +48,7 @@ public class Hanger extends SubsystemBase {
 
         public Angle motorAngle() {
             final Measure<AngleUnit> angleMeasure = Inches.of(inches).divideRatio(kHangerExtensionPerMotorAngle);
-            return Rotations.of(angleMeasure.in(Rotations)); // Promote from Measure<AngleUnit> to Angle
+            return Rotations.of(angleMeasure.in(Rotations));
         }
     }
 
@@ -69,13 +69,6 @@ public class Hanger extends SubsystemBase {
                 new MotorOutputConfigs()
                     .withInverted(InvertedValue.Clockwise_Positive)
                     .withNeutralMode(NeutralModeValue.Brake)
-            )
-            .withCurrentLimits(
-                new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(20))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
-                    .withSupplyCurrentLimitEnable(true)
             )
             .withMotionMagic(
                 new MotionMagicConfigs()

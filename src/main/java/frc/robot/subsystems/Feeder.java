@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/subsystems/Feeder.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -25,7 +26,8 @@ import frc.robot.Ports;
 
 public class Feeder extends SubsystemBase {
     public enum Speed {
-        FEED(5000);
+        FEED(5000),
+        REVERSE(-5000);
 
         private final double rpm;
 
@@ -53,7 +55,7 @@ public class Feeder extends SubsystemBase {
             )
             .withCurrentLimits(
                 new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(120))
+                    .withStatorCurrentLimit(Amps.of(70))
                     .withStatorCurrentLimitEnable(true)
                     .withSupplyCurrentLimit(Amps.of(50))
                     .withSupplyCurrentLimitEnable(true)
@@ -84,8 +86,16 @@ public class Feeder extends SubsystemBase {
         );
     }
 
+    public void stop() {
+        setPercentOutput(0);
+    }
+
     public Command feedCommand() {
-        return startEnd(() -> set(Speed.FEED), () -> setPercentOutput(0));
+        return startEnd(() -> set(Speed.FEED), this::stop);
+    }
+
+    public Command reverseCommand() {
+        return startEnd(() -> set(Speed.REVERSE), this::stop);
     }
 
     @Override

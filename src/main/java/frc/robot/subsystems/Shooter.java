@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/subsystems/Shooter.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
@@ -16,7 +17,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.KrakenX60;
@@ -32,6 +32,7 @@ public class Shooter extends SubsystemBase {
 
     private double dashboardTargetRPM = 0.0;
     private double currentRequestedRPM = 0.0;
+    private final double jamCurrentThresholdAmps = 60.0; 
 
     public Shooter() {
         leftMotor = new TalonFX(Ports.kShooterLeft, Ports.kCANivoreCANBus);
@@ -50,10 +51,10 @@ public class Shooter extends SubsystemBase {
         final TalonFXConfiguration config = new TalonFXConfiguration();
         config.MotorOutput.Inverted = invertDirection;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        config.Voltage.PeakReverseVoltage = 0.0;
-        config.CurrentLimits.StatorCurrentLimit = 120.0;
+        config.Voltage.PeakReverseVoltage = -12.0; 
+        config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 70.0;
+        config.CurrentLimits.SupplyCurrentLimit = 45.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.Slot0.kP = 0.5;
         config.Slot0.kI = 2.0;
@@ -76,6 +77,14 @@ public class Shooter extends SubsystemBase {
         this.currentRequestedRPM = 0.0;
     }
 
+    public boolean isJammed() {
+        return motors.stream().anyMatch(motor -> motor.getStatorCurrent().getValue().in(Amps) > jamCurrentThresholdAmps);
+    }
+
+    public Command runReverseCommand() {
+        return runEnd(() -> setRPM(-1500), this::stop);
+    }
+
     /** * The primary check for velocity. 
      * @param targetRPM The speed to check against.
      */
@@ -95,9 +104,9 @@ public class Shooter extends SubsystemBase {
         return run(() -> setRPM(rpm));
     }
 
-    public Command runShooterCommand(double rpm) {
-        return runEnd(() -> setRPM(rpm), this::stop);
-    }
+    // public Command runShooterCommand(double rpm) {
+    //     return runEnd(() -> setRPM(rpm), this::stop);
+    // }
 
     public Command runShooterCommand(DoubleSupplier rpmSupplier) {
         return runEnd(() -> setRPM(rpmSupplier.getAsDouble()), this::stop);
@@ -114,5 +123,6 @@ public class Shooter extends SubsystemBase {
         builder.addDoubleProperty("Right RPM", () -> rightMotor.getVelocity().getValue().in(RPM), null);
         builder.addDoubleProperty("Target RPM", () -> currentRequestedRPM, null);
         builder.addBooleanProperty("At Target Speed", this::isVelocityWithinTolerance, null);
+        builder.addBooleanProperty("Is Jammed", this::isJammed, null);
     }
 }

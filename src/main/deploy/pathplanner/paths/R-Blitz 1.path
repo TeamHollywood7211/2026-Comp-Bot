@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6120827389443653,
-        "y": 3.135763195435093
+        "x": 3.6,
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.706440397924745,
-        "y": 2.6189884944671187
+        "x": 4.6,
+        "y": 2.5
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R-Start Middle"
     },
     {
       "anchor": {
-        "x": 2.758131241084165,
-        "y": 2.644094151212554
+        "x": 8.3,
+        "y": 2.0
       },
       "prevControl": {
-        "x": 4.123381508321984,
-        "y": 3.5678355466118066
+        "x": 7.300000000000001,
+        "y": 2.0
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "SHOT"
+      "linkedName": "R-Blitz"
     }
   ],
   "rotationTargets": [],
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 39.03551289874684
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

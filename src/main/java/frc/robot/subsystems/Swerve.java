@@ -14,13 +14,16 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import frc.robot.Landmarks;
 import frc.robot.LimelightHelpers;
 import frc.robot.Ports;
 import frc.robot.generated.TunerConstants;
@@ -79,7 +82,19 @@ public class Swerve extends CommandSwerveDrivetrain {
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
-    @Override
+    public double getDistanceToHub() {
+        final Translation2d hubPosition = Landmarks.hubPosition();
+        final Translation2d robotPosition = this.getState().Pose.getTranslation();
+        return robotPosition.getDistance(hubPosition);
+    }
+
+   /* public double getDistanceToHub() {
+        final Translation2d hubPosition = Landmarks.hubPosition();
+        final Translation2d robotPosition = this.getState().Pose.getTranslation();
+        return robotPosition.getDistance(hubPosition);
+    }*/
+
+@Override
     public void periodic() {
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
@@ -87,13 +102,16 @@ public class Swerve extends CommandSwerveDrivetrain {
                         allianceColor == Alliance.Red
                                 ? kRedAlliancePerspectiveRotation
                                 : kBlueAlliancePerspectiveRotation);
-                if (!m_hasAppliedOperatorPerspective) {
+                
+                if (!DriverStation.isAutonomous()) {
                     seedFieldCentric();
                 }
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+        
         updateVision();
+        SmartDashboard.putNumber("Shooter/Distance To Hub", getDistanceToHub());
     }
 
     private void updateVision() {

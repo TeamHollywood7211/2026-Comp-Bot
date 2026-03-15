@@ -3,53 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5,
+        "x": 2.6,
         "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5,
-        "y": 3.75
+        "x": 2.6,
+        "y": 5.0
       },
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": "C-Home"
     },
     {
       "anchor": {
-        "x": 1.0,
-        "y": 3.75
+        "x": 0.48,
+        "y": 7.3
       },
       "prevControl": {
-        "x": 2.499574883372217,
-        "y": 3.75
+        "x": 2.647661015051209,
+        "y": 7.3
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Depot 1"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 180.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "HangReady",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "HangFinish",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -59,13 +41,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.1,
-    "rotation": 180.0
+    "velocity": 0,
+    "rotation": -90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Center",
   "idealStartingState": {
-    "velocity": 0.1,
+    "velocity": 0,
     "rotation": 0.0
   },
   "useDefaultConstraints": true

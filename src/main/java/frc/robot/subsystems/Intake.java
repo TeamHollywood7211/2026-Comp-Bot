@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/subsystems/Intake.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -26,7 +27,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.Constants.KrakenX60;
 import frc.robot.Ports;
 
@@ -47,10 +50,10 @@ public class Intake extends SubsystemBase {
     }
 
     public enum Position {
-        HOMED(110),
-        STOWED(100),
-        INTAKE(-45),
-        AGITATE(20);
+        HOMED(0),
+        STOWED(0),
+        INTAKE(-140),
+        AGITATE(-120);
 
         private final double degrees;
 
@@ -69,7 +72,8 @@ public class Intake extends SubsystemBase {
 
     private final TalonFX pivotMotor;
     private final TalonFXS rollerMotor; 
-    
+    private final TalonFXS rollerMotor2; 
+
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0);
@@ -78,9 +82,10 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         pivotMotor = new TalonFX(Ports.kIntakePivot, Ports.kCANivoreCANBus);
-        rollerMotor = new TalonFXS(Ports.kIntakeRollers, Ports.kCANivoreCANBus); 
+        rollerMotor = new TalonFXS(Ports.kIntakeRollers, Ports.kCANivoreCANBus);
+        rollerMotor2 = new TalonFXS(Ports.kInatkeRollers2, Ports.kCANivoreCANBus); 
         configurePivotMotor();
-        configureRollerMotor();
+        configureRollerMotors();
         SmartDashboard.putData(this);
     }
 
@@ -90,9 +95,9 @@ public class Intake extends SubsystemBase {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
-        config.CurrentLimits.StatorCurrentLimit = 120.0;
+        config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 70.0;
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -109,7 +114,7 @@ public class Intake extends SubsystemBase {
         pivotMotor.getConfigurator().apply(config);
     }
 
-    private void configureRollerMotor() {
+    private void configureRollerMotors() {
         final TalonFXSConfiguration config = new TalonFXSConfiguration();
 
         config.Commutation.MotorArrangement = MotorArrangementValue.VORTEX_JST;
@@ -117,12 +122,13 @@ public class Intake extends SubsystemBase {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        config.CurrentLimits.StatorCurrentLimit = 80.0;
+        config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLimit = 60.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         rollerMotor.getConfigurator().apply(config);
+        rollerMotor2.getConfigurator().apply(config);
     }
 
     private boolean isPositionWithinTolerance() {
@@ -150,15 +156,23 @@ public class Intake extends SubsystemBase {
             rollerVoltageRequest
                 .withOutput(speed.voltage())
         );
+        rollerMotor2.setControl(
+            rollerVoltageRequest
+                .withOutput(speed.voltage())
+        );
     }
 
     public Command intakeCommand() {
         return startEnd(
             () -> {
+                System.out.println("Hi Hollywood");
                 set(Position.INTAKE);
                 set(Speed.INTAKE);
             },
-            () -> set(Speed.STOP)
+            () -> {
+                System.out.println("Bye Hollywood");
+                set(Speed.STOP);
+            }
         );
     }
 

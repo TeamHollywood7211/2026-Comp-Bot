@@ -1,3 +1,4 @@
+// src/main/java/frc/robot/RobotContainer.java
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -20,6 +21,17 @@ import frc.util.Elastic;
 import frc.util.SwerveTelemetry;
 
 public class RobotContainer {
+    public enum SpeedMode {
+        SLOW(0.25),
+        MEDIUM(0.50),
+        FAST(1.0);
+
+        public final double multiplier;
+        SpeedMode(double multiplier) {
+            this.multiplier = multiplier;
+        }
+    }
+
     private final Swerve swerve = new Swerve();
     private final Intake intake = new Intake();
     private final Floor floor = new Floor();
@@ -29,6 +41,8 @@ public class RobotContainer {
     private final Hanger hanger = new Hanger();
     private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
+    private final Leds leds = new Leds();
+    private final FrontRange frontRange = new FrontRange();
     
     private final GamePhaseSubsystem gamePhase = new GamePhaseSubsystem();
     
@@ -38,20 +52,21 @@ public class RobotContainer {
 
     private final AutoRoutines autoRoutines;
 
-    private double manualRPM = 3000.0;
+    private double manualRPM = 3100.0;
     private double manualHoodPos = 0.2; 
+    private SpeedMode currentSpeedMode = SpeedMode.FAST;
 
     private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
             .withDeadband(0.1).withRotationalDeadband(0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final SubsystemCommands subsystemCommands = new SubsystemCommands(
-            swerve, intake, floor, feeder, shooter, hood, hanger, music,
-            () -> -driver.getLeftY(),
-            () -> -driver.getLeftX());
+            swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange,
+            () -> -driver.getLeftY() * currentSpeedMode.multiplier,
+            () -> -driver.getLeftX() * currentSpeedMode.multiplier);
 
     public RobotContainer() {
-        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music);
+        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music, leds, frontRange);
 
         LimelightHelpers.setLimelightNTDouble(Ports.kLimeLightShooter, "stream", 1);
         
@@ -69,8 +84,21 @@ public class RobotContainer {
         autoRoutines.configure();
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
 
-        // This allows the "START SIM MATCH" button in Elastic to trigger the simulation sequence
         SmartDashboard.putData("START SIM MATCH", gamePhase.getSimulateMatchCommand(autoRoutines.getAutoChooser()));
+    }
+
+    private void cycleSpeedMode() {
+        switch (currentSpeedMode) {
+            case FAST:
+                currentSpeedMode = SpeedMode.SLOW;
+                break;
+            case SLOW:
+                currentSpeedMode = SpeedMode.MEDIUM;
+                break;
+            case MEDIUM:
+                currentSpeedMode = SpeedMode.FAST;
+                break;
+        }
     }
 
     private void configureBindings() {
@@ -78,12 +106,16 @@ public class RobotContainer {
 
         RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
                 .onTrue(intake.homingCommand())
-                .onTrue(hanger.homingCommand());
+                .onTrue(hanger.homingCommand())
+                .onTrue(Commands.runOnce(leds::setAllianceColor, leds));
 
+        driver.leftBumper().onTrue(Commands.runOnce(this::cycleSpeedMode));
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
         driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+        driver.b().whileTrue(subsystemCommands.ejectJamCommand());
+        driver.x().whileTrue(subsystemCommands.approachStationCommand());
 
         operator.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
         operator.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(0, manualRPM - 250)));
@@ -120,9 +152,9 @@ public class RobotContainer {
     private void configureManualDriveBindings() {
         swerve.setDefaultCommand(
                 swerve.applyRequest(() -> m_driveRequest
-                        .withVelocityX(-driver.getLeftY() * Driving.kMaxSpeed.in(MetersPerSecond))
-                        .withVelocityY(-driver.getLeftX() * Driving.kMaxSpeed.in(MetersPerSecond))
-                        .withRotationalRate(-driver.getRightX() * 6.28)));
+                        .withVelocityX(-driver.getLeftY() * Driving.kMaxSpeed.in(MetersPerSecond) * currentSpeedMode.multiplier)
+                        .withVelocityY(-driver.getLeftX() * Driving.kMaxSpeed.in(MetersPerSecond) * currentSpeedMode.multiplier)
+                        .withRotationalRate(-driver.getRightX() * 6.28 * currentSpeedMode.multiplier)));
 
         driver.back().onTrue(swerve.runOnce(swerve::seedFieldCentric));
     }
@@ -130,6 +162,7 @@ public class RobotContainer {
     public void updateDashboard() {
         SmartDashboard.putNumber("Shooter/Manual Target RPM", manualRPM);
         SmartDashboard.putNumber("Shooter/Manual Target Hood", manualHoodPos);
+        SmartDashboard.putString("Drive/Speed Mode", currentSpeedMode.name());
     }
 
     public Command getAutonomousCommand() {

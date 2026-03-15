@@ -5,39 +5,57 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "8 ball Shot"
+            "pathName": "L-Blitz 1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AimAndShoot 2s"
+            "name": "IntakeStop"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Shot to Human"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "pathName": "L-Blitz 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Human to Shot"
+            "pathName": "L-Depot 1"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "AimAndShoot 7s"
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeStop"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L-Depot 3"
           }
         }
       ]

@@ -3,48 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 4.0
+        "x": 3.0,
+        "y": 3.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.427989545234114,
-        "y": 4.0
+        "x": 3.0,
+        "y": 2.0
       },
       "isLocked": false,
-      "linkedName": "Center Goal Start"
+      "linkedName": "R-Home"
     },
     {
       "anchor": {
-        "x": 2.5,
-        "y": 4.0
+        "x": 0.7,
+        "y": 0.68
       },
       "prevControl": {
-        "x": 3.0007751652446757,
-        "y": 4.0
+        "x": 1.6999999999999997,
+        "y": 0.6799999999999999
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Center Home"
+      "linkedName": "Human"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "SpinUp",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "AimAndShoot",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -55,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 29.999999999999996
   },
   "useDefaultConstraints": true
 }
