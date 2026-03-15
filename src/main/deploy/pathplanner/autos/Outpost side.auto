@@ -5,21 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "R-Start to Home"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Shoot"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 4.0
+            "pathName": "R-Start to Home"
           }
         },
         {
@@ -31,7 +25,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 7.0
+            "waitTime": 3.0
           }
         },
         {
@@ -43,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R-Home to Start"
+            "pathName": "R-Home to Start Middle"
           }
         },
         {

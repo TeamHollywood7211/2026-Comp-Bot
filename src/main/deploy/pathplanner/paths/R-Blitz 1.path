@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 3.6,
-        "y": 2.0
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
         "x": 4.6,
-        "y": 2.0
+        "y": 2.5
       },
       "isLocked": false,
-      "linkedName": "R-Start"
+      "linkedName": "R-Start Middle"
     },
     {
       "anchor": {

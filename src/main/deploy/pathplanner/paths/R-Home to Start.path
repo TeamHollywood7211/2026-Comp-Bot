@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.0,
-        "y": 2.9999999999999996
+        "x": 3.566367486835376,
+        "y": 2.0190227370460314
       },
       "isLocked": false,
       "linkedName": "R-Home"
@@ -20,8 +20,8 @@
         "y": 2.0
       },
       "prevControl": {
-        "x": 2.6,
-        "y": 2.0
+        "x": 3.0304802152244905,
+        "y": 2.986437203146874
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,13 +41,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.05,
     "rotation": 0.0
   },
   "reversed": false,
   "folder": "Right",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.05,
     "rotation": 29.999999999999996
   },
   "useDefaultConstraints": true
