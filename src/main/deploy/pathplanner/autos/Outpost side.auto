@@ -39,6 +39,30 @@
           "data": {
             "name": "StopAll"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R-Home to Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R-Blitz 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeStop"
+          }
         }
       ]
     }
