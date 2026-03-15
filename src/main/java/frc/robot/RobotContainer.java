@@ -39,7 +39,6 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter();
     private final Hood hood = new Hood();
     private final Hanger hanger = new Hanger();
-    private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
     private final Leds leds = new Leds();
     private final FrontRange frontRange = new FrontRange();
@@ -66,7 +65,7 @@ public class RobotContainer {
             () -> -driver.getLeftX() * currentSpeedMode.multiplier);
 
     public RobotContainer() {
-        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music, leds, frontRange);
+        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange);
 
         LimelightHelpers.setLimelightNTDouble(Ports.kLimeLightShooter, "stream", 1);
         

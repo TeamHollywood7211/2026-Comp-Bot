@@ -27,8 +27,6 @@ public final class SubsystemCommands {
     private final Feeder feeder;
     private final Shooter shooter;
     private final Hood hood;
-    private final Hanger hanger;
-    private final Music music;
     private final Leds leds;
     private final FrontRange frontRange;
 
@@ -46,8 +44,6 @@ public final class SubsystemCommands {
         this.feeder = feeder;
         this.shooter = shooter;
         this.hood = hood;
-        this.hanger = hanger;
-        this.music = music;
         this.leds = leds;
         this.frontRange = frontRange;
         this.forwardInput = forwardInput;
@@ -83,12 +79,16 @@ public final class SubsystemCommands {
         );
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
         
-        return Commands.parallel(
+        Command aimingAndSpinning = Commands.parallel(
             aimAndDriveCommand,
             Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
-            Commands.waitSeconds(0.25).andThen(prepareShotCommand),
+            Commands.waitSeconds(0.25).andThen(prepareShotCommand)
+        );
+
+        return aimingAndSpinning.raceWith(
             Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
                 .andThen(feed())
+                .andThen(Commands.waitSeconds(0.25))
         );
     }
 

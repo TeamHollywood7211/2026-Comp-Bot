@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -10,14 +9,11 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -88,13 +84,7 @@ public class Swerve extends CommandSwerveDrivetrain {
         return robotPosition.getDistance(hubPosition);
     }
 
-   /* public double getDistanceToHub() {
-        final Translation2d hubPosition = Landmarks.hubPosition();
-        final Translation2d robotPosition = this.getState().Pose.getTranslation();
-        return robotPosition.getDistance(hubPosition);
-    }*/
-
-@Override
+    @Override
     public void periodic() {
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
@@ -116,7 +106,8 @@ public class Swerve extends CommandSwerveDrivetrain {
 
     private void updateVision() {
         double yaw = this.getState().Pose.getRotation().getDegrees();
-        LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, 0, 0, 0, 0, 0);
+        double yawRate = Math.toDegrees(this.getState().Speeds.omegaRadiansPerSecond);
+        LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, yawRate, 0, 0, 0, 0);
 
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
@@ -125,19 +116,5 @@ public class Swerve extends CommandSwerveDrivetrain {
             this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
             this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
         }
-    }
-
-    @Override
-    public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
-    }
-
-    @Override
-    public void addVisionMeasurement(
-            Pose2d visionRobotPoseMeters,
-            double timestampSeconds,
-            Matrix<N3, N1> visionMeasurementStdDevs) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
-                visionMeasurementStdDevs);
     }
 }

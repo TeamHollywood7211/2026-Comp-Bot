@@ -19,7 +19,6 @@ import frc.robot.Ports;
 public class Leds extends SubsystemBase {
     private final CANdle candle;
     private final int totalLeds = 300;
-    private final int underglowCount = 150;
     private final int flairCount = 150;
     private final int flairOffset = 150;
 
