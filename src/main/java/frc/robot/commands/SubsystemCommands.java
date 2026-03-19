@@ -1,11 +1,8 @@
-// src/main/java/frc/robot/commands/SubsystemCommands.java
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -71,21 +68,32 @@ public final class SubsystemCommands {
         );
     }
 
-    public Command aimAndShoot() {
+    public Command aimAndShootTeleop() {
         final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(
-            swerve, 
-            () -> DriverStation.isAutonomous() ? 0.0 : forwardInput.getAsDouble(), 
-            () -> DriverStation.isAutonomous() ? 0.0 : leftInput.getAsDouble()
+            swerve, forwardInput, leftInput
         );
         final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
         
-        Command aimingAndSpinning = Commands.parallel(
+        return Commands.parallel(
+            aimAndDriveCommand,
+            Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
+            Commands.waitSeconds(0.25).andThen(prepareShotCommand),
+            Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
+                .andThen(feed())
+        );
+    }
+
+    public Command aimAndShootAuto() {
+        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(
+            swerve, () -> 0.0, () -> 0.0
+        );
+        final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
+        
+        return Commands.parallel(
             aimAndDriveCommand,
             Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
             Commands.waitSeconds(0.25).andThen(prepareShotCommand)
-        );
-
-        return aimingAndSpinning.raceWith(
+        ).raceWith(
             Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
                 .andThen(feed())
                 .andThen(Commands.waitSeconds(0.25))
@@ -99,22 +107,11 @@ public final class SubsystemCommands {
     }
 
     public Command ejectJamCommand() {
-        return Commands.repeatingSequence(
-            Commands.parallel(
-                shooter.runReverseCommand(),
-                feeder.reverseCommand(),
-                floor.reverseCommand()
-            ).until(shooter::isJammed),
-            Commands.parallel(
-                shooter.spinUpCommand(1000), 
-                feeder.feedCommand(),
-                floor.feedCommand()
-            ).withTimeout(0.25)
-        ).finallyDo(() -> {
-            shooter.stop();
-            feeder.stop();
-            floor.stop();
-        });
+        return Commands.parallel(
+            shooter.runReverseCommand(),
+            feeder.reverseCommand(),
+            floor.reverseCommand()
+        );
     }
 
     private Command feed() {

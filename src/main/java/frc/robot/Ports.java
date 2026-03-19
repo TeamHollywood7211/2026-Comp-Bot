@@ -25,5 +25,5 @@ public final class Ports {
     public static final int kHoodRightServo = 1;
     public static final int kIntakeLimitSwitch = 2;
 
-    public static final String kLimeLightShooter = "limelight-right";
+    public static final String kLimeLightShooter = "limelight-shooter";
 }

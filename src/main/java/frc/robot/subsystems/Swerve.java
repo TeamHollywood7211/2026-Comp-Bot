@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -28,9 +29,12 @@ public class Swerve extends CommandSwerveDrivetrain {
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     private boolean m_hasAppliedOperatorPerspective = false;
+    private boolean m_hasInitializedVisionPose = false;
 
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity);
+
+    private final Field2d field = new Field2d();
 
     public Swerve() {
         super(
@@ -40,6 +44,7 @@ public class Swerve extends CommandSwerveDrivetrain {
                 TunerConstants.BackLeft,
                 TunerConstants.BackRight);
 
+        SmartDashboard.putData("Field", field);
         configurePathPlanner();
     }
 
@@ -100,6 +105,7 @@ public class Swerve extends CommandSwerveDrivetrain {
             });
         }
         
+        field.setRobotPose(this.getState().Pose);
         updateVision();
         SmartDashboard.putNumber("Shooter/Distance To Hub", getDistanceToHub());
     }
@@ -112,9 +118,24 @@ public class Swerve extends CommandSwerveDrivetrain {
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
                 .getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
 
-        if (mt2 != null && mt2.tagCount > 0) {
-            this.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 999999));
-            this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+        if (mt2 != null) {
+            SmartDashboard.putNumber("Vision/Tag Count", mt2.tagCount);
+            
+            if (mt2.tagCount > 0) {
+                SmartDashboard.putNumber("Vision/Raw X", mt2.pose.getX());
+                SmartDashboard.putNumber("Vision/Raw Y", mt2.pose.getY());
+
+                if (!m_hasInitializedVisionPose) {
+                    this.resetPose(mt2.pose);
+                    m_hasInitializedVisionPose = true;
+                } else {
+                    this.addVisionMeasurement(
+                        mt2.pose, 
+                        mt2.timestampSeconds, 
+                        VecBuilder.fill(0.7, 0.7, 999999)
+                    );
+                }
+            }
         }
     }
 }

@@ -1,4 +1,3 @@
-// src/main/java/frc/robot/RobotContainer.java
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -142,7 +141,7 @@ public class RobotContainer {
             )
         );
 
-        operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
+        operator.rightTrigger().whileTrue(subsystemCommands.aimAndShootTeleop());
         
         operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
         operator.b().onTrue(music.runOnce(music::stop));
