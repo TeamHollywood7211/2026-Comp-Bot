@@ -86,7 +86,7 @@ public final class AutoRoutines {
         NamedCommands.registerCommand("Play Cali Girls", music.runOnce(() -> music.playSong("cali_girls.chrp")));
         NamedCommands.registerCommand("Stop Music", music.runOnce(music::stop));
         
-        NamedCommands.registerCommand("AutoAimAndShoot", subsystemCommands.aimAndShootAuto());
+        NamedCommands.registerCommand("AutoAimAndShoot", subsystemCommands. aimAndShootAuto());
     }
 
     public void configure() {

@@ -110,8 +110,8 @@ public class RobotContainer {
         driver.leftBumper().onTrue(Commands.runOnce(this::cycleSpeedMode));
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
-        driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+        //driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
+        //driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
         driver.b().whileTrue(subsystemCommands.ejectJamCommand());
         driver.x().whileTrue(subsystemCommands.approachStationCommand());
 
@@ -124,15 +124,6 @@ public class RobotContainer {
             Commands.parallel(
                 shooter.runShooterCommand(() -> manualRPM),
                 Commands.run(() -> hood.setPosition(manualHoodPos), hood).finallyDo(hood::stop)
-            ).alongWith(
-                Commands.sequence(
-                    Commands.waitUntil(() -> shooter.isAtVelocity(manualRPM) && hood.isPositionWithinTolerance()),
-                    Commands.parallel(
-                        feeder.feedCommand(),
-                        floor.runEnd(() -> floor.set(Floor.Speed.FEED), () -> floor.set(Floor.Speed.STOP)),
-                        intake.agitateCommand()
-                    )
-                )
             ).alongWith(
                 Commands.startEnd(
                     () -> { if(shooter.isAtVelocity(manualRPM)) operator.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1.0); },

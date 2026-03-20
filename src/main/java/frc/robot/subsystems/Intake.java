@@ -51,7 +51,7 @@ public class Intake extends SubsystemBase {
     public enum Position {
         HOMED(0),
         STOWED(0),
-        INTAKE(-140),
+        INTAKE(-145),
         AGITATE(-120);
 
         private final double degrees;
@@ -77,7 +77,7 @@ public class Intake extends SubsystemBase {
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
     private final VoltageOut rollerVoltageRequest = new VoltageOut(0);
 
-    private boolean isHomed = true;
+    private boolean isHomed = false;
 
     public Intake() {
         pivotMotor = new TalonFX(Ports.kIntakePivot, Ports.kCANivoreCANBus);
@@ -94,9 +94,9 @@ public class Intake extends SubsystemBase {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
-        config.CurrentLimits.StatorCurrentLimit = 60.0;
+        config.CurrentLimits.StatorCurrentLimit = 80.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 40.0;
+        config.CurrentLimits.SupplyCurrentLimit = 60.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;

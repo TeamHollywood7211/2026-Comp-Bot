@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.758411312294533,
-        "y": 2.644094151212554
+        "x": 7.449548716981729,
+        "y": 2.770456525102345
       },
       "isLocked": false,
       "linkedName": "R-Blitz"
     },
     {
       "anchor": {
-        "x": 5.734771084337349,
-        "y": 2.4832650602409636
+        "x": 2.532951807228916,
+        "y": 2.647180722891566
       },
       "prevControl": {
-        "x": 6.734771084337349,
-        "y": 2.4832650602409636
+        "x": 3.6585060240963863,
+        "y": 2.4941927710843355
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "R-Home"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 88.89829388479366
+    "rotation": 34.04593735660153
   },
   "reversed": false,
   "folder": "Right",

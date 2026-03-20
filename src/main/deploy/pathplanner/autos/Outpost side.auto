@@ -5,39 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "R-Start to Home"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Feed"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopAll"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "R-Home to Start Middle"
           }
         },
         {
@@ -55,7 +25,37 @@
         {
           "type": "named",
           "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R-back to shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "IntakeStop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feed"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopAll"
           }
         }
       ]

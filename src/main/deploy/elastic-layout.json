@@ -36,7 +36,7 @@
             "height": 384.0,
             "type": "Camera Stream",
             "properties": {
-              "topic": "/CameraPublisher/limelight-right",
+              "topic": "/CameraPublisher/limelight-shooter",
               "period": 0.06,
               "rotation_turns": 0
             }

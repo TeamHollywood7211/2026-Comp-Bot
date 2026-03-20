@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.0,
-        "y": 3.0
+        "x": 5.734771084337349,
+        "y": 2.4832650602409636
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5753720657588364,
-        "y": 2.517205511832051
+        "x": 6.310143150096185,
+        "y": 2.0004705720730147
       },
       "isLocked": false,
       "linkedName": "R-Home"
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 2.5
+        "x": 5.581783132530121,
+        "y": 2.0618544935800878
       },
       "prevControl": {
-        "x": 3.036360056491672,
-        "y": 2.972950068714621
+        "x": 5.018143189021792,
+        "y": 2.534804562294709
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 0.4448259448561539
   },
   "reversed": false,
   "folder": "Right",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 29.999999999999996
+    "rotation": 88.89829388479366
   },
   "useDefaultConstraints": true
 }
