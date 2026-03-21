@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.734771084337349,
-        "y": 2.4832650602409636
+        "x": 3.2,
+        "y": 2.8
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.734771084337349,
-        "y": 1.4832650602409636
+        "x": 3.2,
+        "y": 1.7999999999999998
       },
       "isLocked": false,
       "linkedName": "R-Home"
@@ -48,7 +48,7 @@
   "folder": "Right",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 88.89829388479366
+    "rotation": 45.0
   },
   "useDefaultConstraints": true
 }
