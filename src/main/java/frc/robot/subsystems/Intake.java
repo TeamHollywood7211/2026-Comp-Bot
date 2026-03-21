@@ -35,7 +35,7 @@ import frc.robot.Ports;
 public class Intake extends SubsystemBase {
     public enum Speed {
         STOP(0),
-        INTAKE(0.80);
+        INTAKE(0.67);
 
         private final double percentOutput;
 
@@ -51,7 +51,7 @@ public class Intake extends SubsystemBase {
     public enum Position {
         HOMED(0),
         STOWED(0),
-        INTAKE(-145),
+        INTAKE(-149),
         AGITATE(-120);
 
         private final double degrees;
@@ -164,12 +164,10 @@ public class Intake extends SubsystemBase {
     public Command intakeCommand() {
         return startEnd(
             () -> {
-                System.out.println("Hi Hollywood");
                 set(Position.INTAKE);
                 set(Speed.INTAKE);
             },
             () -> {
-                System.out.println("Bye Hollywood");
                 set(Speed.STOP);
             }
         );

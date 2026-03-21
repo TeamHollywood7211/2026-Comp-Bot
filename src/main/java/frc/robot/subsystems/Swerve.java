@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -9,10 +10,15 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -20,9 +26,13 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import frc.robot.Landmarks;
 import frc.robot.LimelightHelpers;
-import frc.robot.Ports;
 import frc.robot.generated.TunerConstants;
 
 public class Swerve extends CommandSwerveDrivetrain {
@@ -30,6 +40,15 @@ public class Swerve extends CommandSwerveDrivetrain {
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     private boolean m_hasAppliedOperatorPerspective = false;
     private boolean m_hasInitializedVisionPose = false;
+
+    private final String[] limelightNames = { "limelight-left", "limelight-right" };
+    
+    // Remember to use the exact camera names from the PhotonVision web dropdown!
+    private final PhotonCamera lumaFrontCam = new PhotonCamera("OV9281"); 
+    private PhotonPoseEstimator lumaFrontEstimator;
+
+    private final PhotonCamera lumaRearCam = new PhotonCamera("Luma_Rear");
+    private PhotonPoseEstimator lumaRearEstimator;
 
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
             .withDriveRequestType(DriveRequestType.Velocity);
@@ -45,7 +64,79 @@ public class Swerve extends CommandSwerveDrivetrain {
                 TunerConstants.BackRight);
 
         SmartDashboard.putData("Field", field);
+        configureVision();
         configurePathPlanner();
+    }
+
+    private void configureVision() {
+        // --- LIMELIGHT CONFIGURATION ---
+        LimelightHelpers.setCameraPose_RobotSpace(
+            "limelight-left", 
+            -0.0325,    
+            -0.3,  
+            0.0975,  
+            0.0,    
+            20.0,    
+            90    
+        );
+
+        LimelightHelpers.setCameraPose_RobotSpace(
+            "limelight-right", 
+            -0.0375,     
+            0.3,  
+            0.0975,   
+            0.0,     
+            20.0,     
+            -90    
+        );
+
+        // --- PHOTONVISION (LUMA) CONFIGURATION ---
+        try {
+            AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+            
+            // 1. FRONT LUMA POSITION
+            Transform3d robotToLumaFront = new Transform3d(
+                new Translation3d(
+                    -0.04, // REPLACE: X (Forward) in meters
+                    0.0,   // REPLACE: Y (Left) in meters
+                    0.6475  // REPLACE: Z (Up) in meters
+                ), 
+                new Rotation3d(
+                    Math.toRadians(0.0),  // Roll
+                    Math.toRadians(20.0), // REPLACE: Pitch
+                    Math.toRadians(0.0)   // Yaw (0 is forward)
+                ) 
+            );
+
+            lumaFrontEstimator = new PhotonPoseEstimator(
+                layout, 
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                robotToLumaFront
+            );
+
+            // 2. REAR USB CAMERA POSITION
+            Transform3d robotToLumaRear = new Transform3d(
+                new Translation3d(
+                    -0.35, // REPLACE: X (Forward) in meters (Negative means back)
+                    0.0,    // REPLACE: Y (Left) in meters
+                    0.415  // REPLACE: Z (Up) in meters
+                ), 
+                new Rotation3d(
+                    Math.toRadians(0.0),   // Roll
+                    Math.toRadians(20.0),  // REPLACE: Pitch
+                    Math.toRadians(180.0)  // Yaw (180 degrees faces perfectly backward)
+                ) 
+            );
+
+            lumaRearEstimator = new PhotonPoseEstimator(
+                layout, 
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, 
+                robotToLumaRear
+            );
+
+        } catch (Exception e) {
+            DriverStation.reportError("Failed to load AprilTag layout: " + e.getMessage(), false);
+        }
     }
 
     private void configurePathPlanner() {
@@ -113,29 +204,43 @@ public class Swerve extends CommandSwerveDrivetrain {
     private void updateVision() {
         double yaw = this.getState().Pose.getRotation().getDegrees();
         double yawRate = Math.toDegrees(this.getState().Speeds.omegaRadiansPerSecond);
-        LimelightHelpers.SetRobotOrientation(Ports.kLimeLightShooter, yaw, yawRate, 0, 0, 0, 0);
 
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers
-                .getBotPoseEstimate_wpiBlue_MegaTag2(Ports.kLimeLightShooter);
+        for (String camName : limelightNames) {
+            LimelightHelpers.SetRobotOrientation(camName, yaw, yawRate, 0, 0, 0, 0);
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camName);
 
-        if (mt2 != null) {
-            SmartDashboard.putNumber("Vision/Tag Count", mt2.tagCount);
-            
-            if (mt2.tagCount > 0) {
-                SmartDashboard.putNumber("Vision/Raw X", mt2.pose.getX());
-                SmartDashboard.putNumber("Vision/Raw Y", mt2.pose.getY());
+            if (mt2 != null && mt2.tagCount > 0) {
+                applyVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+            }
+        }
 
-                if (!m_hasInitializedVisionPose) {
-                    this.resetPose(mt2.pose);
-                    m_hasInitializedVisionPose = true;
-                } else {
-                    this.addVisionMeasurement(
-                        mt2.pose, 
-                        mt2.timestampSeconds, 
-                        VecBuilder.fill(0.7, 0.7, 999999)
-                    );
+        if (lumaFrontEstimator != null) {
+            var frontResult = lumaFrontCam.getLatestResult();
+            if (frontResult.hasTargets()) {
+                Optional<EstimatedRobotPose> frontPose = lumaFrontEstimator.update(frontResult);
+                if (frontPose.isPresent()) {
+                    applyVisionMeasurement(frontPose.get().estimatedPose.toPose2d(), frontPose.get().timestampSeconds);
                 }
             }
+        }
+
+        if (lumaRearEstimator != null) {
+            var rearResult = lumaRearCam.getLatestResult();
+            if (rearResult.hasTargets()) {
+                Optional<EstimatedRobotPose> rearPose = lumaRearEstimator.update(rearResult);
+                if (rearPose.isPresent()) {
+                    applyVisionMeasurement(rearPose.get().estimatedPose.toPose2d(), rearPose.get().timestampSeconds);
+                }
+            }
+        }
+    }
+
+    private void applyVisionMeasurement(Pose2d pose, double timestampSeconds) {
+        if (!m_hasInitializedVisionPose) {
+            this.resetPose(pose);
+            m_hasInitializedVisionPose = true;
+        } else {
+            this.addVisionMeasurement(pose, timestampSeconds, VecBuilder.fill(0.7, 0.7, 999999));
         }
     }
 }
