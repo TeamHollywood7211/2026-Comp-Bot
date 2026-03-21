@@ -66,16 +66,18 @@ public class RobotContainer {
     public RobotContainer() {
         autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange);
 
-        LimelightHelpers.setLimelightNTDouble(Ports.kLimeLightShooter, "stream", 1);
-        
-        SmartDashboard.putStringArray("CameraPublisher/Limelight/streams", 
-            new String[]{"mjpeg:http://10.17.76.11:5800"}); 
+        SmartDashboard.putStringArray("CameraPublisher/Streams/streams", new String[]{
+            "mjpeg:http://10.72.11.12:5800", 
+            "mjpeg:http://10.72.11.13:5800", 
+            "mjpeg:http://10.72.11.20:1181", 
+            "mjpeg:http://10.72.11.20:1182"  
+        }); 
 
         Elastic.sendNotification(
             new Elastic.Notification(
                 Elastic.NotificationLevel.INFO, 
                 "System Online", 
-                "MK5n Configuration Loaded")
+                "Multi-Cam Configuration Loaded")
         );
 
         configureBindings();
@@ -83,6 +85,7 @@ public class RobotContainer {
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
 
         SmartDashboard.putData("START SIM MATCH", gamePhase.getSimulateMatchCommand(autoRoutines.getAutoChooser()));
+        
     }
 
     private void cycleSpeedMode() {
@@ -110,8 +113,6 @@ public class RobotContainer {
         driver.leftBumper().onTrue(Commands.runOnce(this::cycleSpeedMode));
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        //driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
-        //driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
         driver.b().whileTrue(subsystemCommands.ejectJamCommand());
         driver.x().whileTrue(subsystemCommands.approachStationCommand());
 
