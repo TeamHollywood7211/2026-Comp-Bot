@@ -67,14 +67,16 @@ public final class AutoRoutines {
             shooter.setRPM(3100);
         }));
 
-        NamedCommands.registerCommand("Feed", subsystemCommands.autoFeedCommand());
+        NamedCommands.registerCommand("Feed", new InstantCommand(() -> {
+            feeder.set(Feeder.Speed.FEED);
+            floor.set(Floor.Speed.FEED);
+        }));
 
         NamedCommands.registerCommand("StopAll", new InstantCommand(() -> {
             shooter.setRPM(0);
         }).andThen(new InstantCommand(() -> {
             feeder.stop();
             floor.stop();
-            intake.set(Intake.Speed.STOP);
         })));
 
         NamedCommands.registerCommand("SpinUp", Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)));
@@ -84,7 +86,7 @@ public final class AutoRoutines {
         NamedCommands.registerCommand("Play Cali Girls", music.runOnce(() -> music.playSong("cali_girls.chrp")));
         NamedCommands.registerCommand("Stop Music", music.runOnce(music::stop));
         
-        NamedCommands.registerCommand("AutoAimAndShoot", subsystemCommands.aimAndShootAuto());
+        NamedCommands.registerCommand("AutoAimAndShoot", subsystemCommands. aimAndShootAuto());
     }
 
     public void configure() {
