@@ -44,7 +44,7 @@
           {
             "title": "Auto Chooser",
             "x": 384.0,
-            "y": 512.0,
+            "y": 384.0,
             "width": 384.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -116,7 +116,7 @@
           {
             "title": "At Target Speed",
             "x": 384.0,
-            "y": 384.0,
+            "y": 512.0,
             "width": 384.0,
             "height": 128.0,
             "type": "Boolean Box",
