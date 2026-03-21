@@ -114,7 +114,7 @@ public final class SubsystemCommands {
         );
     }
 
-    private Command feed() {
+    public Command feed() {
         return Commands.sequence(
             Commands.waitSeconds(0.25),
             Commands.parallel(

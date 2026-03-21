@@ -50,7 +50,7 @@ public class RobotContainer {
 
     private final AutoRoutines autoRoutines;
 
-    private double manualRPM = 3100.0;
+    private double manualRPM = 3300.0;
     private double manualHoodPos = 0.2; 
     private SpeedMode currentSpeedMode = SpeedMode.FAST;
 
@@ -132,6 +132,8 @@ public class RobotContainer {
                 )
             )
         );
+        
+        operator.rightBumper().whileTrue(subsystemCommands.feed());
 
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShootTeleop());
         
