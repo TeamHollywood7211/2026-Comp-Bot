@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "R-Start to Start Middle"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "Intake"
