@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Floor;
@@ -54,39 +53,37 @@ public final class AutoRoutines {
         NamedCommands.registerCommand("StowIntake", intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
         NamedCommands.registerCommand("ApproachStation", subsystemCommands.approachStationCommand());
         
-        NamedCommands.registerCommand("Intake", new InstantCommand(() -> {
+        NamedCommands.registerCommand("Intake", Commands.runOnce(() -> {
             intake.set(Intake.Position.INTAKE);
             intake.set(Intake.Speed.INTAKE);
-        }));
+        }, intake));
 
-        NamedCommands.registerCommand("IntakeStop", new InstantCommand(() -> {
+        NamedCommands.registerCommand("IntakeStop", Commands.runOnce(() -> {
             intake.set(Intake.Speed.STOP);
-        }));
+        }, intake));
 
-        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> {
-            shooter.setRPM(3100);
-        }));
+        NamedCommands.registerCommand("Shoot", Commands.runOnce(() -> {
+            shooter.setRPM(3200);
+        }, shooter));
 
-        NamedCommands.registerCommand("Feed", new InstantCommand(() -> {
+        NamedCommands.registerCommand("Feed", Commands.runOnce(() -> {
             feeder.set(Feeder.Speed.FEED);
             floor.set(Floor.Speed.FEED);
-        }));
+        }, feeder, floor));
 
-        NamedCommands.registerCommand("StopAll", new InstantCommand(() -> {
+        NamedCommands.registerCommand("AutoContinuousShoot", subsystemCommands.autoContinuousShootCommand());
+
+        NamedCommands.registerCommand("StopAll", Commands.runOnce(() -> {
             shooter.setRPM(0);
-        }).andThen(new InstantCommand(() -> {
             feeder.stop();
             floor.stop();
-        })));
+            intake.set(Intake.Speed.STOP);
+        }, shooter, feeder, floor, intake));
 
-        NamedCommands.registerCommand("SpinUp", Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)));
+        NamedCommands.registerCommand("SpinUp", Commands.parallel(shooter.spinUpCommand(3200), hood.positionCommand(0.32)));
 
-        NamedCommands.registerCommand("HangReady", hanger.positionCommand(Hanger.Position.HANGING));
-        NamedCommands.registerCommand("HangFinish", hanger.positionCommand(Hanger.Position.HUNG));
         NamedCommands.registerCommand("Play Cali Girls", music.runOnce(() -> music.playSong("cali_girls.chrp")));
         NamedCommands.registerCommand("Stop Music", music.runOnce(music::stop));
-        
-        NamedCommands.registerCommand("AutoAimAndShoot", subsystemCommands. aimAndShootAuto());
     }
 
     public void configure() {

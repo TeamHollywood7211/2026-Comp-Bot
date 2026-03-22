@@ -1,4 +1,3 @@
-// src/main/java/frc/robot/subsystems/Intake.java
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -94,9 +93,9 @@ public class Intake extends SubsystemBase {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         
-        config.CurrentLimits.StatorCurrentLimit = 80.0;
+        config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 60.0;
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -185,6 +184,23 @@ public class Intake extends SubsystemBase {
                 .repeatedly()
             )
             .handleInterrupt(() -> {
+                set(Position.INTAKE);
+                set(Speed.STOP);
+            });
+    }
+
+    // Finite agitate command built specifically for PathPlanner
+    public Command autoAgitateCommand() {
+        return runOnce(() -> set(Speed.INTAKE))
+            .andThen(
+                Commands.sequence(
+                    runOnce(() -> set(Position.AGITATE)),
+                    Commands.waitUntil(this::isPositionWithinTolerance),
+                    runOnce(() -> set(Position.INTAKE)),
+                    Commands.waitUntil(this::isPositionWithinTolerance)
+                )
+            )
+            .finallyDo(() -> {
                 set(Position.INTAKE);
                 set(Speed.STOP);
             });

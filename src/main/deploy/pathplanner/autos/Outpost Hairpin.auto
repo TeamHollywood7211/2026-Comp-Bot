@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L-Depot 1"
+            "pathName": "Start to Over the Bump"
           }
         },
         {
@@ -19,13 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot 2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "SpinUp"
+            "pathName": "HairPin1"
           }
         },
         {
@@ -35,21 +29,27 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "SpinUp"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "L-Depot 3"
+            "pathName": "Shot"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Feed"
+            "name": "AutoContinuousShoot"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 4.0
+            "waitTime": 5.0
           }
         },
         {
