@@ -43,10 +43,10 @@ public class Swerve extends CommandSwerveDrivetrain {
 
     private final String[] limelightNames = { "limelight-left", "limelight-right" };
     
-    private final PhotonCamera lumaFrontCam = new PhotonCamera("luma-front"); 
+    private final PhotonCamera lumaFrontCam = new PhotonCamera("luma-front1"); 
     private PhotonPoseEstimator lumaFrontEstimator;
 
-    private final PhotonCamera lumaRearCam = new PhotonCamera("luma-back");
+    private final PhotonCamera lumaRearCam = new PhotonCamera("luma-back1");
     private PhotonPoseEstimator lumaRearEstimator;
 
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
