@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 7.1
+        "x": 3.2886162624821687,
+        "y": 2.3853209700427964
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 2.8357631954350926,
+        "y": 2.669971469329529
       },
       "isLocked": false,
-      "linkedName": "Blitz Top"
+      "linkedName": "depo tiny over bump"
     },
     {
       "anchor": {
-        "x": 8.3,
-        "y": 1.0
+        "x": 2.9522111269614832,
+        "y": 3.0840085592011417
       },
       "prevControl": {
-        "x": 8.3,
-        "y": 2.0
+        "x": 2.8690060975276985,
+        "y": 2.8482609758054194
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz Bottom"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 44.999999999999964
   },
   "reversed": false,
-  "folder": "shared",
+  "folder": "depo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 1.684684317896239
   },
   "useDefaultConstraints": true
 }

@@ -41,6 +41,66 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopAll"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start to Over the Bump"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HairPin1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeStop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpinUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shot"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "AutoContinuousShoot"

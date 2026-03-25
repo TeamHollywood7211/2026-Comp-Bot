@@ -34,9 +34,9 @@ public class PrepareShotCommand extends Command {
     );
 
     static {
-        distanceToShotMap.put(Inches.of(52.0), new Shot(3200, 0.19));
-        distanceToShotMap.put(Inches.of(114.4), new Shot(3800, 0.40));
-        distanceToShotMap.put(Inches.of(165.5), new Shot(4300, 0.48));
+        distanceToShotMap.put(Inches.of(40.0), new Shot(2900, 0.19));
+        distanceToShotMap.put(Inches.of(99), new Shot(3425, 0.40));
+        distanceToShotMap.put(Inches.of(158.0), new Shot(3950, 0.48));
     }
 
     private final Shooter shooter;

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 7.1
+        "x": 3.6,
+        "y": 2.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 4.6,
+        "y": 2.5
       },
       "isLocked": false,
-      "linkedName": "Blitz Top"
+      "linkedName": "R-Start Middle"
     },
     {
       "anchor": {
-        "x": 8.3,
-        "y": 1.0
+        "x": 5.578758915834522,
+        "y": 2.5
       },
       "prevControl": {
-        "x": 8.3,
-        "y": 2.0
+        "x": 4.578758915834522,
+        "y": 2.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz Bottom"
+      "linkedName": "depo over bump"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "shared",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.1257679538087
   },
   "useDefaultConstraints": true
 }

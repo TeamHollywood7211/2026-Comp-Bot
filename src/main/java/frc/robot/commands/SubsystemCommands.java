@@ -107,7 +107,7 @@ public final class SubsystemCommands {
 
     public Command ejectJamCommand() {
         return Commands.parallel(
-            shooter.runReverseCommand(),
+            shooter.spinUpCommand(3200),
             feeder.reverseCommand(),
             floor.reverseCommand()
         );

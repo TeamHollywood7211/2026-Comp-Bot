@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 7.1
+        "x": 5.798716119828815,
+        "y": 2.3853209700427964
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 4.724807417974322,
+        "y": 2.4888302425106996
       },
       "isLocked": false,
-      "linkedName": "Blitz Top"
+      "linkedName": "depo wow"
     },
     {
       "anchor": {
-        "x": 8.3,
-        "y": 1.0
+        "x": 3.2886162624821687,
+        "y": 2.3853209700427964
       },
       "prevControl": {
-        "x": 8.3,
-        "y": 2.0
+        "x": 4.207261055634808,
+        "y": 2.398259629101285
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz Bottom"
+      "linkedName": "depo tiny over bump"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 1.684684317896239
   },
   "reversed": false,
-  "folder": "shared",
+  "folder": "depo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

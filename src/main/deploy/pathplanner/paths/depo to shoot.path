@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 7.1
+        "x": 5.811654778887304,
+        "y": 2.566462196861627
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 4.867132667617689,
+        "y": 2.398259629101284
       },
       "isLocked": false,
-      "linkedName": "Blitz Top"
+      "linkedName": "Depo go home"
     },
     {
       "anchor": {
-        "x": 8.3,
-        "y": 1.0
+        "x": 2.5511126961483592,
+        "y": 2.9287446504992873
       },
       "prevControl": {
-        "x": 8.3,
-        "y": 2.0
+        "x": 4.116690442225391,
+        "y": 2.17830242510699
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz Bottom"
+      "linkedName": "depo shooting 2.0"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 35.70669140060287
   },
   "reversed": false,
-  "folder": "shared",
+  "folder": "depo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 91.63657704161683
   },
   "useDefaultConstraints": true
 }

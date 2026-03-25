@@ -31,7 +31,7 @@ public class AimAndDriveCommand extends Command {
     // Default tuning values
     private double kP = 18.0;
     private double kD = 0.5;
-    private double kAimOffset = -2.5; 
+    private double kAimOffset = -3; 
 
     private final SwerveRequest.FieldCentricFacingAngle fieldCentricFacingAngleRequest = new SwerveRequest.FieldCentricFacingAngle()
             .withRotationalDeadband(Driving.kPIDRotationDeadband)

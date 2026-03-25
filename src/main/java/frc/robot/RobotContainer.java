@@ -113,14 +113,15 @@ public class RobotContainer {
         driver.leftBumper().onTrue(Commands.runOnce(this::cycleSpeedMode));
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        driver.b().whileTrue(subsystemCommands.ejectJamCommand());
+       // driver.b().whileTrue(subsystemCommands.ejectJamCommand());
         driver.x().whileTrue(subsystemCommands.approachStationCommand());
 
         operator.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
         operator.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(0, manualRPM - 250)));
         operator.povRight().onTrue(Commands.runOnce(() -> manualHoodPos = Math.min(0.77, manualHoodPos + 0.05)));
         operator.povLeft().onTrue(Commands.runOnce(() -> manualHoodPos = Math.max(0.01, manualHoodPos - 0.05)));
-
+        operator.x().whileTrue(subsystemCommands.ejectJamCommand());
+       
         operator.leftTrigger().whileTrue(
             Commands.parallel(
                 shooter.runShooterCommand(() -> manualRPM),

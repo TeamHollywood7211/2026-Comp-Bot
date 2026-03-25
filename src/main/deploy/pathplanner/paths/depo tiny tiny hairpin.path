@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 7.1
+        "x": 6.885563480741797,
+        "y": 3.627432239657632
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 6.8444637339154575,
+        "y": 3.3808337586995965
       },
       "isLocked": false,
-      "linkedName": "Blitz Top"
+      "linkedName": "depo mini hairpin"
     },
     {
       "anchor": {
-        "x": 8.3,
-        "y": 1.0
+        "x": 5.798716119828815,
+        "y": 2.3853209700427964
       },
       "prevControl": {
-        "x": 8.3,
-        "y": 2.0
+        "x": 6.2774465049928665,
+        "y": 2.5664621968616266
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz Bottom"
+      "linkedName": "depo wow"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "shared",
+  "folder": "depo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 39.644174957144806
   },
   "useDefaultConstraints": true
 }

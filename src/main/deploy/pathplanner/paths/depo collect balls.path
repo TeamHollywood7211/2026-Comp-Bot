@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 7.1
+        "x": 5.617574893009986,
+        "y": 2.462952924393724
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 6.044550641940085,
+        "y": 1.4407988587731824
       },
       "isLocked": false,
-      "linkedName": "Blitz Top"
+      "linkedName": "depo start"
     },
     {
       "anchor": {
-        "x": 8.3,
-        "y": 1.0
+        "x": 6.691483594864478,
+        "y": 0.8973751783166914
       },
       "prevControl": {
-        "x": 8.3,
-        "y": 2.0
+        "x": 5.746961483594864,
+        "y": 1.2855349500713271
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz Bottom"
+      "linkedName": "depo to balls super hungry"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 35.362461887068946
   },
   "reversed": false,
-  "folder": "shared",
+  "folder": "depo",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 92.60256220249981
   },
   "useDefaultConstraints": true
 }

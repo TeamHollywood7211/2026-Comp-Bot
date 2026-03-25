@@ -208,8 +208,8 @@ public class Intake extends SubsystemBase {
 
     public Command homingCommand() {
         return Commands.sequence(
-            runOnce(() -> setPivotPercentOutput(0.1)),
-            Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 6),
+            runOnce(() -> setPivotPercentOutput(0.3)),
+            Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 7),
             runOnce(() -> {
                 pivotMotor.setPosition(Position.HOMED.angle());
                 isHomed = true;
