@@ -69,8 +69,8 @@ public class Intake extends SubsystemBase {
     private static final Angle kPositionTolerance = Degrees.of(5);
 
     private final TalonFX pivotMotor;
-    private final TalonFXS rollerMotor; 
-    private final TalonFXS rollerMotor2; 
+    private final TalonFXS rollerMotor;
+    private final TalonFXS rollerMotor2;
 
     private final VoltageOut pivotVoltageRequest = new VoltageOut(0);
     private final MotionMagicVoltage pivotMotionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
@@ -81,7 +81,7 @@ public class Intake extends SubsystemBase {
     public Intake() {
         pivotMotor = new TalonFX(Ports.kIntakePivot, Ports.kCANivoreCANBus);
         rollerMotor = new TalonFXS(Ports.kIntakeRollers, Ports.kCANivoreCANBus);
-        rollerMotor2 = new TalonFXS(Ports.kInatkeRollers2, Ports.kCANivoreCANBus); 
+        rollerMotor2 = new TalonFXS(Ports.kInatkeRollers2, Ports.kCANivoreCANBus);
         configurePivotMotor();
         configureRollerMotors();
         SmartDashboard.putData(this);
@@ -89,26 +89,26 @@ public class Intake extends SubsystemBase {
 
     private void configurePivotMotor() {
         final TalonFXConfiguration config = new TalonFXConfiguration();
-        
+
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        
+
         config.CurrentLimits.StatorCurrentLimit = 60.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        
+
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         config.Feedback.SensorToMechanismRatio = kPivotReduction;
-        
+
         config.MotionMagic.MotionMagicCruiseVelocity = kMaxPivotSpeed.in(RotationsPerSecond);
         config.MotionMagic.MotionMagicAcceleration = kMaxPivotSpeed.per(Second).in(RotationsPerSecond.per(Second));
-        
+
         config.Slot0.kP = 300;
         config.Slot0.kI = 0;
         config.Slot0.kD = 0;
         config.Slot0.kV = 12.0 / kMaxPivotSpeed.in(RotationsPerSecond);
-        
+
         pivotMotor.getConfigurator().apply(config);
     }
 
@@ -124,7 +124,7 @@ public class Intake extends SubsystemBase {
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 60.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        
+
         rollerMotor.getConfigurator().apply(config);
         rollerMotor2.getConfigurator().apply(config);
     }
@@ -137,95 +137,84 @@ public class Intake extends SubsystemBase {
 
     private void setPivotPercentOutput(double percentOutput) {
         pivotMotor.setControl(
-            pivotVoltageRequest
-                .withOutput(Volts.of(percentOutput * 12.0))
-        );
+                pivotVoltageRequest
+                        .withOutput(Volts.of(percentOutput * 12.0)));
     }
 
     public void set(Position position) {
         pivotMotor.setControl(
-            pivotMotionMagicRequest
-                .withPosition(position.angle())
-        );
+                pivotMotionMagicRequest
+                        .withPosition(position.angle()));
     }
 
     public void set(Speed speed) {
         rollerMotor.setControl(
-            rollerVoltageRequest
-                .withOutput(speed.voltage())
-        );
+                rollerVoltageRequest
+                        .withOutput(speed.voltage()));
         rollerMotor2.setControl(
-            rollerVoltageRequest
-                .withOutput(speed.voltage())
-        );
+                rollerVoltageRequest
+                        .withOutput(speed.voltage()));
     }
 
     public Command intakeCommand() {
         return startEnd(
-            () -> {
-                set(Position.INTAKE);
-                set(Speed.INTAKE);
-            },
-            () -> {
-                set(Speed.STOP);
-            }
-        );
+                () -> {
+                    set(Position.INTAKE);
+                    set(Speed.INTAKE);
+                },
+                () -> {
+                    set(Speed.STOP);
+                });
     }
 
     public Command agitateCommand() {
-        return runOnce(() -> set(Speed.INTAKE))
-            .andThen(
-                Commands.sequence(
-                    runOnce(() -> set(Position.AGITATE)),
-                    Commands.waitUntil(this::isPositionWithinTolerance),
-                    runOnce(() -> set(Position.INTAKE)),
-                    Commands.waitUntil(this::isPositionWithinTolerance)
-                )
+        return Commands.sequence(
+                runOnce(() -> set(Position.AGITATE)),
+                Commands.waitUntil(this::isPositionWithinTolerance),
+                runOnce(() -> set(Position.INTAKE)),
+                Commands.waitUntil(this::isPositionWithinTolerance))
                 .repeatedly()
-            )
-            .handleInterrupt(() -> {
-                set(Position.INTAKE);
-                set(Speed.STOP);
-            });
+                .handleInterrupt(() -> {
+                    set(Position.INTAKE);
+                    set(Speed.STOP);
+                });
     }
 
     // Finite agitate command built specifically for PathPlanner
     public Command autoAgitateCommand() {
-        return runOnce(() -> set(Speed.INTAKE))
-            .andThen(
-                Commands.sequence(
-                    runOnce(() -> set(Position.AGITATE)),
-                    Commands.waitUntil(this::isPositionWithinTolerance),
-                    runOnce(() -> set(Position.INTAKE)),
-                    Commands.waitUntil(this::isPositionWithinTolerance)
-                )
-            )
-            .finallyDo(() -> {
-                set(Position.INTAKE);
-                set(Speed.STOP);
-            });
+        return Commands.sequence(
+                runOnce(() -> set(Position.AGITATE)),
+                Commands.waitUntil(this::isPositionWithinTolerance),
+                runOnce(() -> set(Position.INTAKE)),
+                Commands.waitUntil(this::isPositionWithinTolerance))
+                .finallyDo(() -> {
+                    set(Position.INTAKE);
+                    set(Speed.STOP);
+                });
     }
 
     public Command homingCommand() {
         return Commands.sequence(
-            runOnce(() -> setPivotPercentOutput(0.3)),
-            Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 7),
-            runOnce(() -> {
-                pivotMotor.setPosition(Position.HOMED.angle());
-                isHomed = true;
-                set(Position.STOWED);
-            })
-        )
-        .unless(() -> isHomed)
-        .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+                runOnce(() -> setPivotPercentOutput(0.3)),
+                Commands.waitUntil(() -> pivotMotor.getSupplyCurrent().getValue().in(Amps) > 7),
+                runOnce(() -> {
+                    pivotMotor.setPosition(Position.HOMED.angle());
+                    isHomed = true;
+                    set(Position.STOWED);
+                }))
+                .unless(() -> isHomed)
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addStringProperty("Command", () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null", null);
+        builder.addStringProperty("Command", () -> getCurrentCommand() != null ? getCurrentCommand().getName() : "null",
+                null);
         builder.addDoubleProperty("Angle (degrees)", () -> pivotMotor.getPosition().getValue().in(Degrees), null);
         builder.addDoubleProperty("RPM", () -> rollerMotor.getVelocity().getValue().in(RPM), null);
-        builder.addDoubleProperty("Pivot Supply Current", () -> pivotMotor.getSupplyCurrent().getValue().in(Amps), null);
-        builder.addDoubleProperty("Roller Supply Current", () -> rollerMotor.getSupplyCurrent().getValue().in(Amps), null);
+        builder.addDoubleProperty("Pivot Supply Current", () -> pivotMotor.getSupplyCurrent().getValue().in(Amps),
+                null);
+        builder.addDoubleProperty("Roller Supply Current", () -> rollerMotor.getSupplyCurrent().getValue().in(Amps),
+                null);
     }
 }
