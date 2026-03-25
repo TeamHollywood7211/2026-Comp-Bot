@@ -43,11 +43,10 @@ public class Swerve extends CommandSwerveDrivetrain {
 
     private final String[] limelightNames = { "limelight-left", "limelight-right" };
     
-    // Remember to use the exact camera names from the PhotonVision web dropdown!
-    private final PhotonCamera lumaFrontCam = new PhotonCamera("luma-front"); 
+    private final PhotonCamera lumaFrontCam = new PhotonCamera("luma-front1"); 
     private PhotonPoseEstimator lumaFrontEstimator;
 
-    private final PhotonCamera lumaRearCam = new PhotonCamera("luma-back");
+    private final PhotonCamera lumaRearCam = new PhotonCamera("luma-back1");
     private PhotonPoseEstimator lumaRearEstimator;
 
     private final SwerveRequest.ApplyRobotSpeeds autoRequest = new SwerveRequest.ApplyRobotSpeeds()
@@ -69,7 +68,6 @@ public class Swerve extends CommandSwerveDrivetrain {
     }
 
     private void configureVision() {
-        // --- LIMELIGHT CONFIGURATION ---
         LimelightHelpers.setCameraPose_RobotSpace(
             "limelight-left", 
             -0.0325,    
@@ -90,22 +88,12 @@ public class Swerve extends CommandSwerveDrivetrain {
             -90    
         );
 
-        // --- PHOTONVISION (LUMA) CONFIGURATION ---
         try {
             AprilTagFieldLayout layout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
             
-            // 1. FRONT LUMA POSITION
             Transform3d robotToLumaFront = new Transform3d(
-                new Translation3d(
-                    -0.04, // REPLACE: X (Forward) in meters
-                    0.0,   // REPLACE: Y (Left) in meters
-                    0.6475  // REPLACE: Z (Up) in meters
-                ), 
-                new Rotation3d(
-                    Math.toRadians(0.0),  // Roll
-                    Math.toRadians(20.0), // REPLACE: Pitch
-                    Math.toRadians(0.0)   // Yaw (0 is forward)
-                ) 
+                new Translation3d(-0.04, 0.0, 0.6475), 
+                new Rotation3d(Math.toRadians(0.0), Math.toRadians(20.0), Math.toRadians(0.0)) 
             );
 
             lumaFrontEstimator = new PhotonPoseEstimator(
@@ -114,18 +102,9 @@ public class Swerve extends CommandSwerveDrivetrain {
                 robotToLumaFront
             );
 
-            // 2. REAR USB CAMERA POSITION
             Transform3d robotToLumaRear = new Transform3d(
-                new Translation3d(
-                    -0.35, // REPLACE: X (Forward) in meters (Negative means back)
-                    0.0,    // REPLACE: Y (Left) in meters
-                    0.415  // REPLACE: Z (Up) in meters
-                ), 
-                new Rotation3d(
-                    Math.toRadians(0.0),   // Roll
-                    Math.toRadians(20.0),  // REPLACE: Pitch
-                    Math.toRadians(180.0)  // Yaw (180 degrees faces perfectly backward)
-                ) 
+                new Translation3d(-0.35, 0.0, 0.415), 
+                new Rotation3d(Math.toRadians(0.0), Math.toRadians(20.0), Math.toRadians(180.0)) 
             );
 
             lumaRearEstimator = new PhotonPoseEstimator(
@@ -210,16 +189,24 @@ public class Swerve extends CommandSwerveDrivetrain {
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(camName);
 
             if (mt2 != null && mt2.tagCount > 0) {
-                applyVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+                // Limelight MT2 relies heavily on gyro. Distance scaling helps prevent jumpiness.
+                double distance = mt2.avgTagDist;
+                double stdDev = mt2.tagCount > 1 ? 0.4 : 0.8 + (distance * 0.2);
+                applyVisionMeasurement(mt2.pose, mt2.timestampSeconds, stdDev);
             }
         }
 
         if (lumaFrontEstimator != null) {
             var frontResult = lumaFrontCam.getLatestResult();
             if (frontResult.hasTargets()) {
-                Optional<EstimatedRobotPose> frontPose = lumaFrontEstimator.update(frontResult);
-                if (frontPose.isPresent()) {
-                    applyVisionMeasurement(frontPose.get().estimatedPose.toPose2d(), frontPose.get().timestampSeconds);
+                boolean rejectPose = frontResult.getTargets().size() == 1 && frontResult.getBestTarget().getPoseAmbiguity() > 0.2;
+                if (!rejectPose) {
+                    Optional<EstimatedRobotPose> frontPose = lumaFrontEstimator.update(frontResult);
+                    if (frontPose.isPresent()) {
+                        double distance = frontResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm();
+                        double stdDev = frontResult.getTargets().size() > 1 ? 0.3 : 0.7 + (distance * 0.2);
+                        applyVisionMeasurement(frontPose.get().estimatedPose.toPose2d(), frontPose.get().timestampSeconds, stdDev);
+                    }
                 }
             }
         }
@@ -227,20 +214,27 @@ public class Swerve extends CommandSwerveDrivetrain {
         if (lumaRearEstimator != null) {
             var rearResult = lumaRearCam.getLatestResult();
             if (rearResult.hasTargets()) {
-                Optional<EstimatedRobotPose> rearPose = lumaRearEstimator.update(rearResult);
-                if (rearPose.isPresent()) {
-                    applyVisionMeasurement(rearPose.get().estimatedPose.toPose2d(), rearPose.get().timestampSeconds);
+                boolean rejectPose = rearResult.getTargets().size() == 1 && rearResult.getBestTarget().getPoseAmbiguity() > 0.2;
+                if (!rejectPose) {
+                    Optional<EstimatedRobotPose> rearPose = lumaRearEstimator.update(rearResult);
+                    if (rearPose.isPresent()) {
+                        double distance = rearResult.getBestTarget().getBestCameraToTarget().getTranslation().getNorm();
+                        double stdDev = rearResult.getTargets().size() > 1 ? 0.3 : 0.7 + (distance * 0.2);
+                        applyVisionMeasurement(rearPose.get().estimatedPose.toPose2d(), rearPose.get().timestampSeconds, stdDev);
+                    }
                 }
             }
         }
     }
 
-    private void applyVisionMeasurement(Pose2d pose, double timestampSeconds) {
+    private void applyVisionMeasurement(Pose2d pose, double timestampSeconds, double stdDev) {
         if (!m_hasInitializedVisionPose) {
             this.resetPose(pose);
             m_hasInitializedVisionPose = true;
         } else {
-            this.addVisionMeasurement(pose, timestampSeconds, VecBuilder.fill(0.7, 0.7, 999999));
+            // Cap standard deviation at an extremely untrustworthy number if it spikes
+            stdDev = Math.min(stdDev, 5.0);
+            this.addVisionMeasurement(pose, timestampSeconds, VecBuilder.fill(stdDev, stdDev, 999999));
         }
     }
 }
