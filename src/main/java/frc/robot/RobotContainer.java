@@ -105,16 +105,15 @@ public class RobotContainer {
     private void configureBindings() {
         configureManualDriveBindings();
 
-        RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
-                .onTrue(intake.homingCommand())
-                .onTrue(hanger.homingCommand())
-                .onTrue(Commands.runOnce(leds::setAllianceColor, leds));
+        // RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
+        //         // .onTrue(intake.homingCommand())
+        //         // .onTrue(hanger.homingCommand())
+        //         .onTrue(Commands.runOnce(leds::setAllianceColor, leds));
 
         driver.leftBumper().onTrue(Commands.runOnce(this::cycleSpeedMode));
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
        // driver.b().whileTrue(subsystemCommands.ejectJamCommand());
-        driver.x().whileTrue(subsystemCommands.approachStationCommand());
 
         operator.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
         operator.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(0, manualRPM - 250)));
@@ -136,7 +135,7 @@ public class RobotContainer {
         
         operator.rightBumper().whileTrue(subsystemCommands.feed());
 
-        operator.rightTrigger().whileTrue(subsystemCommands.aimAndShootTeleop());
+        operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
     
         operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
         operator.b().onTrue(music.runOnce(music::stop));

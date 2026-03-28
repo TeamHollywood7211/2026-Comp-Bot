@@ -54,57 +54,6 @@ public final class SubsystemCommands {
         this(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange, () -> 0, () -> 0);
     }
 
-    public Command approachStationCommand() {
-        final SwerveRequest.RobotCentric forwardRequest = new SwerveRequest.RobotCentric()
-            .withVelocityX(0.75).withVelocityY(0).withRotationalRate(0); 
-        final SwerveRequest.SwerveDriveBrake brakeRequest = new SwerveRequest.SwerveDriveBrake();
-
-        return Commands.sequence(
-            swerve.applyRequest(() -> forwardRequest).until(frontRange::isCloseEnough),
-            Commands.parallel(
-                swerve.applyRequest(() -> brakeRequest).withTimeout(0.2), 
-                Commands.runEnd(leds::setGreenFlash, leds::setAllianceColor, leds).withTimeout(3.0)
-            )
-        );
-    }
-
-    public Command aimAndShootTeleop() {
-        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(
-            swerve, forwardInput, leftInput
-        );
-        final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
-        
-        return Commands.parallel(
-            aimAndDriveCommand,
-            Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
-            Commands.waitSeconds(0.25).andThen(prepareShotCommand),
-            Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
-                .andThen(feed())
-        );
-    }
-
-    public Command aimAndShootAuto() {
-        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(
-            swerve, () -> 0.0, () -> 0.0
-        );
-        final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
-        
-        return Commands.parallel(
-            aimAndDriveCommand,
-            Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
-            Commands.waitSeconds(0.25).andThen(prepareShotCommand)
-        ).raceWith(
-            Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
-                .andThen(autoFeedCommand())
-        );
-    }
-
-    public Command shootManually() {
-        return shooter.dashboardSpinUpCommand()
-            .andThen(feed())
-            .handleInterrupt(() -> shooter.stop());
-    }
-
     public Command ejectJamCommand() {
         return Commands.parallel(
             shooter.spinUpCommand(3200),
@@ -124,26 +73,24 @@ public final class SubsystemCommands {
         );
     }
 
-    public Command autoFeedCommand() {
+      public Command aimAndShoot() {
+        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(
+            swerve, forwardInput, leftInput
+        );
+        final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
+        
         return Commands.parallel(
-            feeder.feedCommand(),
-            floor.feedCommand()
+            aimAndDriveCommand,
+            Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
+            Commands.waitSeconds(0.25).andThen(prepareShotCommand),
+            Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
+                .andThen(feed())
         );
     }
 
-    // Unified infinite auto shoot command
-    public Command autoContinuousShootCommand() {
-        double targetRPM = 3200.0;
-        return Commands.parallel(
-            shooter.runShooterCommand(() -> targetRPM),
-            Commands.sequence(
-                Commands.waitUntil(() -> shooter.isAtVelocity(targetRPM)),
-                Commands.parallel(
-                    feeder.feedCommand(),
-                    floor.feedCommand(),
-                    intake.agitateCommand()
-                )
-            )
-        );
+    public Command shootManually() {
+        return shooter.dashboardSpinUpCommand()
+            .andThen(feed())
+            .handleInterrupt(() -> shooter.stop());
     }
 }

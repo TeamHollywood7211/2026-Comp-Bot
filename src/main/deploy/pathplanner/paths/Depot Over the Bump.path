@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 7.1
+        "x": 3.5732667617689007,
+        "y": 5.666679029957204
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 3.8835607049541885,
+        "y": 5.66137715010336
       },
       "isLocked": false,
-      "linkedName": "Blitz Top"
+      "linkedName": "Depot-Start"
     },
     {
       "anchor": {
-        "x": 8.3,
-        "y": 1.0
+        "x": 5.648744444444444,
+        "y": 5.666679029957204
       },
       "prevControl": {
-        "x": 8.3,
-        "y": 2.0
+        "x": 4.9950253754561045,
+        "y": 5.667275222573305
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Blitz Bottom"
+      "linkedName": "Depot-OverTheBump"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "shared",
+  "folder": "Depot",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -90.0

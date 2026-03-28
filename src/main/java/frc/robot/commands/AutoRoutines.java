@@ -26,7 +26,6 @@ public final class AutoRoutines {
     private final Feeder feeder;
     private final Shooter shooter;
     private final Hood hood;
-    private final Hanger hanger;
     private final Music music;
 
     private final SubsystemCommands subsystemCommands;
@@ -41,7 +40,6 @@ public final class AutoRoutines {
         this.feeder = feeder;
         this.shooter = shooter;
         this.hood = hood;
-        this.hanger = hanger;
         this.music = music;
 
         this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange);
@@ -56,34 +54,44 @@ public final class AutoRoutines {
         NamedCommands.registerCommand("Intake", new InstantCommand(() -> {
             intake.set(Intake.Position.INTAKE);
             intake.set(Intake.Speed.INTAKE);
-        }));
+        }, intake));
 
         NamedCommands.registerCommand("IntakeStop", new InstantCommand(() -> {
             intake.set(Intake.Speed.STOP);
-        }));
-
-        NamedCommands.registerCommand("Shoot", new InstantCommand(() -> {
-            shooter.setRPM(3200);
-        }));
+        }, intake));
 
         NamedCommands.registerCommand("Feed", new InstantCommand(() -> {
             feeder.set(Feeder.Speed.FEED);
             floor.set(Floor.Speed.FEED);
-        }));
+        }, feeder, floor));
 
-        NamedCommands.registerCommand("StopAll", new InstantCommand(() -> {
+        NamedCommands.registerCommand("AgitateUp", new InstantCommand(() -> {
+            intake.set(Intake.Position.AGITATE);
+        }, intake));
+
+        NamedCommands.registerCommand("AgitateDown", new InstantCommand(() -> {
+            intake.set(Intake.Position.INTAKE);
+        }, intake));
+
+        NamedCommands.registerCommand("Feed Auto", subsystemCommands.feed().repeatedly());
+            
+        NamedCommands.registerCommand("AimandShoot", subsystemCommands.aimAndShoot().repeatedly());
+
+        NamedCommands.registerCommand("StopAll", Commands.runOnce(() -> {
             shooter.setRPM(0);
-        }).andThen(new InstantCommand(() -> {
             feeder.stop();
             floor.stop();
-        })));
+            intake.set(Intake.Speed.STOP);
+        }, shooter, feeder, floor, intake));
 
-        NamedCommands.registerCommand("SpinUp", Commands.parallel(shooter.spinUpCommand(2600), hood.positionCommand(0.32)));
+        NamedCommands.registerCommand("SpinUp", Commands.parallel(
+            Commands.runOnce(() -> shooter.setRPM(2900), shooter),
+            Commands.runOnce(() -> hood.setPosition(0.19), hood)
+        ));
 
         NamedCommands.registerCommand("Play Cali Girls", music.runOnce(() -> music.playSong("cali_girls.chrp")));
         NamedCommands.registerCommand("Stop Music", music.runOnce(music::stop));
-        
-        NamedCommands.registerCommand("AutoAimAndShoot", subsystemCommands. aimAndShootAuto());
+    
     }
 
     public void configure() {
