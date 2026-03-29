@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L-Depot 1"
+            "pathName": "Outpost Over the Bump"
           }
         },
         {
@@ -19,13 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot 2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "pathName": "Outpost HairPin"
           }
         },
         {
@@ -37,31 +31,50 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L-Depot 3"
+            "pathName": "Outpost Shot"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimandShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.5
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Feed"
+            "name": "Intake"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 4.0
+            "pathName": "x2 Outpost Over the Bump"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "StopAll"
+            "name": "IntakeStop"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Testing",
   "choreoAuto": false
 }

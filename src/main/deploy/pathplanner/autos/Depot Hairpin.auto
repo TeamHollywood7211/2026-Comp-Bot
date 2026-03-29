@@ -5,33 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "L-Blitz 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeStop"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L-Blitz 2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L-Depot 1"
+            "pathName": "Depot Over the Bump"
           }
         },
         {
@@ -43,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot 2"
+            "pathName": "Depot Hairpin"
           }
         },
         {
@@ -53,9 +29,33 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "SpinUp"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "L-Depot 3"
+            "pathName": "Depot Shot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feed"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopAll"
           }
         }
       ]

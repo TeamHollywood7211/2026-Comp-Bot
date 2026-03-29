@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.3,
-        "y": 6.1
+        "x": 3.5732667617689007,
+        "y": 2.3853209700427964
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.300000000000001,
-        "y": 6.1
+        "x": 3.8835607049541885,
+        "y": 2.39062284989664
       },
       "isLocked": false,
-      "linkedName": "L-Blitz 1"
+      "linkedName": "Outpost-Start"
     },
     {
       "anchor": {
-        "x": 3.0,
-        "y": 5.2
+        "x": 5.648744444444444,
+        "y": 2.3853209700427964
       },
       "prevControl": {
-        "x": 3.643133333333334,
-        "y": 5.804155555555557
+        "x": 4.9950253754561045,
+        "y": 2.3847247774266953
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "L-Home"
+      "linkedName": "OverTheBump"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -35.0
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Left",
+  "folder": "Outpost",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

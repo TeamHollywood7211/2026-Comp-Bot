@@ -1,4 +1,3 @@
-// src/main/java/frc/robot/RobotContainer.java
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -39,7 +38,6 @@ public class RobotContainer {
     private final Shooter shooter = new Shooter();
     private final Hood hood = new Hood();
     private final Hanger hanger = new Hanger();
-    private final Limelight limelight = new Limelight(Ports.kLimeLightShooter);
     private final Music music = new Music(swerve);
     private final Leds leds = new Leds();
     private final FrontRange frontRange = new FrontRange();
@@ -52,7 +50,7 @@ public class RobotContainer {
 
     private final AutoRoutines autoRoutines;
 
-    private double manualRPM = 3100.0;
+    private double manualRPM = 3300.0;
     private double manualHoodPos = 0.2; 
     private SpeedMode currentSpeedMode = SpeedMode.FAST;
 
@@ -66,18 +64,20 @@ public class RobotContainer {
             () -> -driver.getLeftX() * currentSpeedMode.multiplier);
 
     public RobotContainer() {
-        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, limelight, music, leds, frontRange);
+        autoRoutines = new AutoRoutines(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange);
 
-        LimelightHelpers.setLimelightNTDouble(Ports.kLimeLightShooter, "stream", 1);
-        
-        SmartDashboard.putStringArray("CameraPublisher/Limelight/streams", 
-            new String[]{"mjpeg:http://10.17.76.11:5800"}); 
+        SmartDashboard.putStringArray("CameraPublisher/Streams/streams", new String[]{
+            "mjpeg:http://10.72.11.12:5800", 
+            "mjpeg:http://10.72.11.13:5800", 
+            "mjpeg:http://10.72.11.20:1181", 
+            "mjpeg:http://10.72.11.20:1182"  
+        }); 
 
         Elastic.sendNotification(
             new Elastic.Notification(
                 Elastic.NotificationLevel.INFO, 
                 "System Online", 
-                "MK5n Configuration Loaded")
+                "Multi-Cam Configuration Loaded")
         );
 
         configureBindings();
@@ -85,6 +85,7 @@ public class RobotContainer {
         swerve.registerTelemetry(swerveTelemetry::telemeterize);
 
         SmartDashboard.putData("START SIM MATCH", gamePhase.getSimulateMatchCommand(autoRoutines.getAutoChooser()));
+        
     }
 
     private void cycleSpeedMode() {
@@ -104,37 +105,26 @@ public class RobotContainer {
     private void configureBindings() {
         configureManualDriveBindings();
 
-        RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
-                .onTrue(intake.homingCommand())
-                .onTrue(hanger.homingCommand())
-                .onTrue(Commands.runOnce(leds::setAllianceColor, leds));
+        // RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
+        //         // .onTrue(intake.homingCommand())
+        //         // .onTrue(hanger.homingCommand())
+        //         .onTrue(Commands.runOnce(leds::setAllianceColor, leds));
 
         driver.leftBumper().onTrue(Commands.runOnce(this::cycleSpeedMode));
         driver.rightTrigger().whileTrue(intake.intakeCommand());
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        driver.y().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
-        driver.a().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
-        driver.b().whileTrue(subsystemCommands.ejectJamCommand());
-        driver.x().whileTrue(subsystemCommands.approachStationCommand());
+       // driver.b().whileTrue(subsystemCommands.ejectJamCommand());
 
         operator.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
         operator.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(0, manualRPM - 250)));
         operator.povRight().onTrue(Commands.runOnce(() -> manualHoodPos = Math.min(0.77, manualHoodPos + 0.05)));
         operator.povLeft().onTrue(Commands.runOnce(() -> manualHoodPos = Math.max(0.01, manualHoodPos - 0.05)));
-
+        operator.x().whileTrue(subsystemCommands.ejectJamCommand());
+       
         operator.leftTrigger().whileTrue(
             Commands.parallel(
                 shooter.runShooterCommand(() -> manualRPM),
                 Commands.run(() -> hood.setPosition(manualHoodPos), hood).finallyDo(hood::stop)
-            ).alongWith(
-                Commands.sequence(
-                    Commands.waitUntil(() -> shooter.isAtVelocity(manualRPM) && hood.isPositionWithinTolerance()),
-                    Commands.parallel(
-                        feeder.feedCommand(),
-                        floor.runEnd(() -> floor.set(Floor.Speed.FEED), () -> floor.set(Floor.Speed.STOP)),
-                        intake.agitateCommand()
-                    )
-                )
             ).alongWith(
                 Commands.startEnd(
                     () -> { if(shooter.isAtVelocity(manualRPM)) operator.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1.0); },
@@ -142,9 +132,11 @@ public class RobotContainer {
                 )
             )
         );
+        
+        operator.rightBumper().whileTrue(subsystemCommands.feed());
 
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
-        
+    
         operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
         operator.b().onTrue(music.runOnce(music::stop));
     }

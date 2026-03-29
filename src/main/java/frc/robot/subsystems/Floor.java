@@ -53,7 +53,7 @@ public class Floor extends SubsystemBase {
                 new CurrentLimitsConfigs()
                     .withStatorCurrentLimit(Amps.of(70))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(30))
+                    .withSupplyCurrentLimit(Amps.of(40))
                     .withSupplyCurrentLimitEnable(true)
             );
 
@@ -73,11 +73,11 @@ public class Floor extends SubsystemBase {
     }
 
     public Command feedCommand() {
-        return startEnd(() -> set(Speed.FEED), this::stop);
+        return startEnd(() -> set(Speed.FEED), () -> set(Speed.STOP));
     }
 
     public Command reverseCommand() {
-        return startEnd(() -> set(Speed.REVERSE), this::stop);
+        return startEnd(() -> set(Speed.REVERSE), () -> set(Speed.STOP));
     }
 
     @Override
