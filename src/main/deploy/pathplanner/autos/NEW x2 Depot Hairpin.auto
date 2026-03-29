@@ -29,39 +29,52 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "SpinUp"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Depot Shot"
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Feed"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimandShoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.5
+                }
+              }
+            ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 3.0
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "x2 Depot Over the Bump"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "StopAll"
+            "name": "IntakeStop"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Testing",
   "choreoAuto": false
 }

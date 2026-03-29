@@ -49,7 +49,31 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 3.0
+            "waitTime": 4.5
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopAll"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "x2 Depot Over the Bump"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeStop"
           }
         },
         {

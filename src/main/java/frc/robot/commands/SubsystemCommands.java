@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -31,10 +30,9 @@ public final class SubsystemCommands {
     private final DoubleSupplier leftInput;
 
     public SubsystemCommands(
-        Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds, FrontRange frontRange,
-        DoubleSupplier forwardInput, DoubleSupplier leftInput
-    ) {
+            Swerve swerve, Intake intake, Floor floor, Feeder feeder,
+            Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds, FrontRange frontRange,
+            DoubleSupplier forwardInput, DoubleSupplier leftInput) {
         this.swerve = swerve;
         this.intake = intake;
         this.floor = floor;
@@ -48,49 +46,42 @@ public final class SubsystemCommands {
     }
 
     public SubsystemCommands(
-        Swerve swerve, Intake intake, Floor floor, Feeder feeder,
-        Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds, FrontRange frontRange
-    ) {
+            Swerve swerve, Intake intake, Floor floor, Feeder feeder,
+            Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds, FrontRange frontRange) {
         this(swerve, intake, floor, feeder, shooter, hood, hanger, music, leds, frontRange, () -> 0, () -> 0);
     }
 
     public Command ejectJamCommand() {
         return Commands.parallel(
-            shooter.spinUpCommand(3200),
-            feeder.reverseCommand(),
-            floor.reverseCommand()
-        );
+                shooter.spinUpCommand(3200),
+                feeder.reverseCommand(),
+                floor.reverseCommand());
     }
 
     public Command feed() {
         return Commands.sequence(
-            Commands.waitSeconds(0.25),
-            Commands.parallel(
-                feeder.feedCommand(),
-                Commands.waitSeconds(0.125)
-                    .andThen(floor.feedCommand().alongWith(intake.agitateCommand()))
-            )
-        );
+                Commands.waitSeconds(0.25),
+                Commands.parallel(
+                        feeder.feedCommand(),
+                        Commands.waitSeconds(0.125)
+                                .andThen(floor.feedCommand().alongWith(intake.agitateCommand()))));
     }
 
-      public Command aimAndShoot() {
-        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(
-            swerve, forwardInput, leftInput
-        );
-        final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood, () -> swerve.getState().Pose);
-        
+    public Command aimAndShoot() {
+        final AimAndDriveCommand aimAndDriveCommand = new AimAndDriveCommand(swerve, forwardInput, leftInput);
+        final PrepareShotCommand prepareShotCommand = new PrepareShotCommand(shooter, hood,
+                () -> swerve.getState().Pose);
         return Commands.parallel(
-            aimAndDriveCommand,
-            Commands.run(() -> leds.setAimingMode(aimAndDriveCommand.isAimed()), leds).finallyDo(leds::setAllianceColor),
-            Commands.waitSeconds(0.25).andThen(prepareShotCommand),
-            Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
-                .andThen(feed())
-        );
+                aimAndDriveCommand,
+                Commands.waitSeconds(0.25)
+                        .andThen(prepareShotCommand),
+                Commands.waitUntil(() -> aimAndDriveCommand.isAimed() && prepareShotCommand.isReadyToShoot())
+                        .andThen(feed()));
     }
 
     public Command shootManually() {
         return shooter.dashboardSpinUpCommand()
-            .andThen(feed())
-            .handleInterrupt(() -> shooter.stop());
+                .andThen(feed())
+                .handleInterrupt(() -> shooter.stop());
     }
 }
