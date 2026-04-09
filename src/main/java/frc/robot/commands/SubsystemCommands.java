@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -83,5 +84,40 @@ public final class SubsystemCommands {
         return shooter.dashboardSpinUpCommand()
                 .andThen(feed())
                 .handleInterrupt(() -> shooter.stop());
+    }
+
+    private double calculatePassingRPM() {
+        // Gets current distance to hub in meters
+        double distance = swerve.getDistanceToHub();
+
+        // --- TUNE THESE VALUES ON THE FIELD ---
+        double minDistance = 3.0; // Meters (Closer to hub)
+        double maxDistance = 8.0; // Meters (Mid-field)
+        double minRpm = 2500.0; // Slower lob for when you are close
+        double maxRpm = 4500.0; // Faster lob for when you are far
+
+        // Clamp distance so we don't calculate RPMs outside our bounds
+        double clampedDistance = Math.max(minDistance, Math.min(maxDistance, distance));
+
+        // Map the distance to the RPM range (Linear Interpolation)
+        double percentage = (clampedDistance - minDistance) / (maxDistance - minDistance);
+        double targetRpm = minRpm + (percentage * (maxRpm - minRpm));
+
+        SmartDashboard.putNumber("Shooter/Passing Target RPM", targetRpm);
+
+        return targetRpm;
+    }
+
+    public Command automaticPassingShot() {
+        return Commands.parallel(
+                // 1. Constantly recalculate and set the RPM based on moving distance
+                shooter.runShooterCommand(this::calculatePassingRPM),
+
+                // 2. Lock the hood all the way up for the maximum lob arc
+                Commands.run(() -> hood.setPosition(0.77), hood),
+
+                // 3. Wait for the shooter to hit the moving target, then automatically feed
+                Commands.waitUntil(shooter::isVelocityWithinTolerance)
+                        .andThen(feed()));
     }
 }

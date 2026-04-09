@@ -136,6 +136,8 @@ public class RobotContainer {
         operator.rightBumper().whileTrue(subsystemCommands.feed());
 
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
+
+        operator.leftBumper().whileTrue(subsystemCommands.automaticPassingShot());
     
         operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
         operator.b().onTrue(music.runOnce(music::stop));
