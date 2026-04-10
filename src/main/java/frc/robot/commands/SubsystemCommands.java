@@ -93,8 +93,8 @@ public final class SubsystemCommands {
         // --- TUNE THESE VALUES ON THE FIELD ---
         double minDistance = 3.0; // Meters (Closer to hub)
         double maxDistance = 8.0; // Meters (Mid-field)
-        double minRpm = 2500.0; // Slower lob for when you are close
-        double maxRpm = 4500.0; // Faster lob for when you are far
+        double minRpm = 3500.0; // Slower lob for when you are close
+        double maxRpm = 6000.0; // Faster lob for when you are far
 
         // Clamp distance so we don't calculate RPMs outside our bounds
         double clampedDistance = Math.max(minDistance, Math.min(maxDistance, distance));
