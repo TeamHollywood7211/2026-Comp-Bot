@@ -52,12 +52,12 @@ public class Shooter extends SubsystemBase {
         config.MotorOutput.Inverted = invertDirection;
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.Voltage.PeakReverseVoltage = -12.0; 
-        config.CurrentLimits.StatorCurrentLimit = 60.0;
+        config.CurrentLimits.StatorCurrentLimit = 80.0;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 45.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.Slot0.kP = 0.5;
-        config.Slot0.kI = 2.0;
+        config.Slot0.kP = 1.0;
+        config.Slot0.kI = 0.0;
         config.Slot0.kD = 0.0;
         config.Slot0.kV = 12.0 / KrakenX60.kFreeSpeed.in(RotationsPerSecond);
         motor.getConfigurator().apply(config);
