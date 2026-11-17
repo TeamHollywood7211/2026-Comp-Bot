@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.627966666666667,
-        "y": 3.1969777777777777
+        "x": 2.706376604850214,
+        "y": 3.1098858773181166
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.627966666666667,
-        "y": 3.1969777777777777
+        "x": 3.5093514503090812,
+        "y": 2.6993275003962585
       },
       "isLocked": false,
       "linkedName": "Outpost-Shot"
     },
     {
       "anchor": {
-        "x": 4.543666191155491,
-        "y": 2.17830242510699
+        "x": 4.6601141226818825,
+        "y": 2.2171184022824537
       },
       "prevControl": {
-        "x": 3.7366782565250363,
-        "y": 2.156091748007069
+        "x": 3.9743651925820256,
+        "y": 2.372382310984308
       },
       "nextControl": {
-        "x": 5.953980028530669,
-        "y": 2.2171184022824537
+        "x": 6.036132843432165,
+        "y": 1.9055669938106916
       },
       "isLocked": false,
       "linkedName": null
@@ -77,8 +77,8 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.0776502363268154,
-      "maxWaypointRelativePos": 1.8879135719108762,
+      "minWaypointRelativePos": 1.1424713031735414,
+      "maxWaypointRelativePos": 2.706279540850791,
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
@@ -107,7 +107,7 @@
   "folder": "Outpost",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 27.580184969645522
+    "rotation": 34.592288687509956
   },
   "useDefaultConstraints": true
 }

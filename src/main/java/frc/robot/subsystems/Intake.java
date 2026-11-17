@@ -46,7 +46,7 @@ public class Intake extends SubsystemBase {
             return Volts.of(percentOutput * 12.0);
         }
     }
-
+    
     public enum Position {
         HOMED(0),
         STOWED(0),

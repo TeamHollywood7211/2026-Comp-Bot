@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "x2 Outpost Over the Bump"
+            "pathName": "x2 outpost out"
           }
         },
         {
@@ -80,6 +80,12 @@
           "type": "named",
           "data": {
             "name": "StopAll"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpinUp"
           }
         }
       ]

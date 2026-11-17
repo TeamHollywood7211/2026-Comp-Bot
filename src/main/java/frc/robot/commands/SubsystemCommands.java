@@ -29,8 +29,9 @@ public final class SubsystemCommands {
 
     private final DoubleSupplier forwardInput;
     private final DoubleSupplier leftInput;
-
-    public SubsystemCommands(
+    public static int DebugText = 43;
+   
+public SubsystemCommands(
             Swerve swerve, Intake intake, Floor floor, Feeder feeder,
             Shooter shooter, Hood hood, Hanger hanger, Music music, Leds leds, FrontRange frontRange,
             DoubleSupplier forwardInput, DoubleSupplier leftInput) {
@@ -86,6 +87,11 @@ public final class SubsystemCommands {
                 .handleInterrupt(() -> shooter.stop());
     }
 
+
+    public Command testData(){
+        SmartDashboard.putNumber( "At Volocaty" , DebugText );
+        return testData();
+    }
     private double calculatePassingRPM() {
         // Gets current distance to hub in meters
         double distance = swerve.getDistanceToHub();
@@ -118,6 +124,8 @@ public final class SubsystemCommands {
 
                 // 3. Wait for the shooter to hit the moving target, then automatically feed
                 Commands.waitUntil(shooter::isVelocityWithinTolerance)
-                        .andThen(feed()));
+                        .andThen(testData())
+                        .andThen(feed())
+        );
     }
 }

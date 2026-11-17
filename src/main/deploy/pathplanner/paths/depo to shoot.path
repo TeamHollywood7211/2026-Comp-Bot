@@ -1,0 +1,59 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.6491298145506419,
+        "y": 6.021084165477889
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.4642653352353778,
+        "y": 5.387089871611984
+      },
+      "isLocked": false,
+      "linkedName": "Depo to shoot"
+    },
+    {
+      "anchor": {
+        "x": 3.1851069900142646,
+        "y": 4.093223965763196
+      },
+      "prevControl": {
+        "x": 2.628744650499286,
+        "y": 4.403751783166904
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": 52.446837021429154
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -4.0856167799748775
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -179.38648737496973
+  },
+  "useDefaultConstraints": true
+}
