@@ -24,6 +24,8 @@ import frc.robot.Ports;
 
 public class Shooter extends SubsystemBase {
     private static final AngularVelocity kVelocityTolerance = RPM.of(118);
+    /** Feeding stops if shooter speed falls below this fraction of the requested RPM. TUNE ON ROBOT. */
+    private static final double kMinFeedFraction = 0.85;
 
     private final TalonFX leftMotor, middleMotor, rightMotor;
     private final List<TalonFX> motors;
@@ -93,6 +95,17 @@ public class Shooter extends SubsystemBase {
         return motors.stream().allMatch(motor -> 
             motor.getVelocity().getValue().isNear(RPM.of(targetRPM), kVelocityTolerance)
         );
+    }
+
+    /**
+     * Jam protection: true while every motor is at least kMinFeedFraction of the requested RPM.
+     * False when nothing is requested. Much looser than isAtVelocity, so the normal dip while
+     * shooting doesn't trip it, but a stalled/jammed shooter does.
+     */
+    public boolean isAboveFeedMinimum() {
+        if (currentRequestedRPM <= 0.0) return false;
+        final AngularVelocity minimum = RPM.of(currentRequestedRPM * kMinFeedFraction);
+        return motors.stream().allMatch(motor -> motor.getVelocity().getValue().gte(minimum));
     }
 
     /** Helper for commands that don't want to pass a specific RPM */
