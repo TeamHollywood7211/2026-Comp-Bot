@@ -24,12 +24,9 @@ public final class SubsystemCommands {
     private final Feeder feeder;
     private final Shooter shooter;
     private final Hood hood;
-    private final Leds leds;
-    private final FrontRange frontRange;
 
     private final DoubleSupplier forwardInput;
     private final DoubleSupplier leftInput;
-    public static int DebugText = 43;
    
 public SubsystemCommands(
             Swerve swerve, Intake intake, Floor floor, Feeder feeder,
@@ -41,8 +38,6 @@ public SubsystemCommands(
         this.feeder = feeder;
         this.shooter = shooter;
         this.hood = hood;
-        this.leds = leds;
-        this.frontRange = frontRange;
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
     }
@@ -62,11 +57,20 @@ public SubsystemCommands(
 
     public Command feed() {
         return Commands.sequence(
+                // Start feeding only once the shooter is at its requested speed (tight tolerance).
+                // These checks have no subsystem requirements, so they won't cancel the shooter.
+                Commands.waitUntil(shooter::isVelocityWithinTolerance),
                 Commands.waitSeconds(0.25),
+                // Jam protection: keep feeding only while the shooter stays above the minimum
+                // fraction of its target RPM (looser, so the normal dip while shooting is OK).
                 Commands.parallel(
                         feeder.feedCommand(),
                         Commands.waitSeconds(0.125)
-                                .andThen(floor.feedCommand().alongWith(intake.agitateCommand()))));
+                                .andThen(floor.feedCommand().alongWith(intake.agitateCommand())))
+                        .onlyWhile(shooter::isAboveFeedMinimum))
+                // If the shooter drops too low the feed stops; while the button is still held,
+                // start over and wait for the shooter to recover before feeding again.
+                .repeatedly();
     }
 
     public Command aimAndShoot() {
@@ -87,11 +91,6 @@ public SubsystemCommands(
                 .handleInterrupt(() -> shooter.stop());
     }
 
-
-    public Command testData(){
-        SmartDashboard.putNumber( "At Volocaty" , DebugText );
-        return testData();
-    }
     private double calculatePassingRPM() {
         // Gets current distance to hub in meters
         double distance = swerve.getDistanceToHub();
@@ -120,12 +119,9 @@ public SubsystemCommands(
                 shooter.runShooterCommand(this::calculatePassingRPM),
 
                 // 2. Lock the hood all the way up for the maximum lob arc
-                Commands.run(() -> hood.setPosition(0.77), hood),
-
-                // 3. Wait for the shooter to hit the moving target, then automatically feed
-                Commands.waitUntil(shooter::isVelocityWithinTolerance)
-                        .andThen(testData())
-                        .andThen(feed())
-        );
+                Commands.run(() -> hood.setPosition(0.77), hood));
+        // Feeding is intentionally NOT part of this command. The operator feeds with the
+        // right bumper (feed()). If this group also required feeder/floor/intake, pressing
+        // right bumper would cancel the whole group (including the shooter spin-up).
     }
 }
