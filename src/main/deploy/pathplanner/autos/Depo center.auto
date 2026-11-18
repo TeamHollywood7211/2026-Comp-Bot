@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depo start"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "depo center"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "depo center to back"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

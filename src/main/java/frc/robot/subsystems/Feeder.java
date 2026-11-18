@@ -39,7 +39,7 @@ public class Feeder extends SubsystemBase {
             return RPM.of(rpm);
         }
     }
-
+   
     private final TalonFX motor;
     private final VelocityVoltage velocityRequest = new VelocityVoltage(0).withSlot(0);
     private final VoltageOut voltageRequest = new VoltageOut(0);

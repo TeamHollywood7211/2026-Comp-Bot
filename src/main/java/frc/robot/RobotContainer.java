@@ -115,16 +115,20 @@ public class RobotContainer {
         driver.rightBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
        // driver.b().whileTrue(subsystemCommands.ejectJamCommand());
 
+       driver.povUp().onTrue(Commands.runOnce(() -> feeder.set((Feeder.Speed.FEED))));
+       driver.povUp().onTrue(Commands.runOnce(() -> floor.set(Floor.Speed.FEED)));
+       
+
         operator.povUp().onTrue(Commands.runOnce(() -> manualRPM += 250));
         operator.povDown().onTrue(Commands.runOnce(() -> manualRPM = Math.max(0, manualRPM - 250)));
         operator.povRight().onTrue(Commands.runOnce(() -> manualHoodPos = Math.min(0.77, manualHoodPos + 0.05)));
         operator.povLeft().onTrue(Commands.runOnce(() -> manualHoodPos = Math.max(0.01, manualHoodPos - 0.05)));
         operator.x().whileTrue(subsystemCommands.ejectJamCommand());
-       
+    
         operator.leftTrigger().whileTrue(
             Commands.parallel(
-                shooter.runShooterCommand(() -> manualRPM),
-                Commands.run(() -> hood.setPosition(manualHoodPos), hood).finallyDo(hood::stop)
+                shooter.runShooterCommand(() -> manualRPM)
+                // Commands.run(() -> hood.setPosition(manualHoodPos), hood).finallyDo(hood::stop)
             ).alongWith(
                 Commands.startEnd(
                     () -> { if(shooter.isAtVelocity(manualRPM)) operator.getHID().setRumble(GenericHID.RumbleType.kBothRumble, 1.0); },
@@ -138,9 +142,11 @@ public class RobotContainer {
         operator.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
 
         operator.leftBumper().whileTrue(subsystemCommands.automaticPassingShot());
+
+
     
-        operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
-        operator.b().onTrue(music.runOnce(music::stop));
+        //operator.a().onTrue(music.runOnce(() -> music.playSong("cali_girls.chrp")));
+        //operator.b().onTrue(music.runOnce(music::stop));
     }
 
     private void configureManualDriveBindings() {

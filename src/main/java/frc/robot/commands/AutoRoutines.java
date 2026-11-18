@@ -85,7 +85,7 @@ public final class AutoRoutines {
         }, shooter, feeder, floor, intake));
 
         NamedCommands.registerCommand("SpinUp", Commands.parallel(
-            Commands.runOnce(() -> shooter.setRPM(2900), shooter),
+            Commands.runOnce(() -> shooter.setRPM(3100), shooter),
             Commands.runOnce(() -> hood.setPosition(0.19), hood)
         ));
 
